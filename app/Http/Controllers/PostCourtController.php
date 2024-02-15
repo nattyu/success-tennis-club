@@ -91,7 +91,7 @@ class PostCourtController extends Controller
             PostAttendance::create($post_null_attendance);
         }
 
-        return back()->with('message', '保存しました');
+        return back()->with('message', '保存しました。');
     }
 
     /**

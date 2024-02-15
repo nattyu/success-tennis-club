@@ -13,13 +13,13 @@
         @endif
         <form method="post" action="{{ route('post-court.store') }}">
             @csrf
-            <div class="mt-8">
+            <div class="">
                 <div class="w-full flex flex-col">
                     <label for="elected_member" class="font-semibold mt-4">当選者 {{ auth()->user()->nickname }}</label>
                 </div>
             </div>
 
-            <div class="mt-8">
+            <div class="">
                 <div class="w-full flex flex-col">
                     <label for="elected_date" class="font-semibold mt-4">日付</label>
                     <x-input-error :messages="$errors->get('date')" class="mt-2" />
@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <div class="mt-8">
+            <div class="">
                 <div class="w-full flex flex-col">
                     <label for="court_id" class="font-semibold mt-4">コート選択</label>
                     <x-input-error :messages="$errors->get('court_id')" class="mt-2" />
@@ -40,7 +40,7 @@
                 </div>
             </div>
 
-            <div class="mt-8">
+            <div class="">
                 <div class="w-full flex flex-col">
                     <label for="court_number" class="font-semibold mt-4">コート番号</label>
                     <x-input-error :messages="$errors->get('court_number')" class="mt-2" />
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="mt-8">
+            <div class="">
                 <div class="w-full flex flex-col">
                     <label for="start_time" class="font-semibold mt-4">開始時間</label>
                     <x-input-error :messages="$errors->get('start_time')" class="mt-2" />
@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <div class="mt-8">
+            <div class="">
                 <div class="w-full flex flex-col">
                     <label for="end_time" class="font-semibold mt-4">終了時間</label>
                     <x-input-error :messages="$errors->get('end_time')" class="mt-2" />
