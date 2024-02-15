@@ -68,7 +68,7 @@ class PostAttendanceController extends Controller
                 $postAttendance = PostAttendance::create($validated);
             }
 
-            return back()->with('message', '保存しました');
+            return back()->with('message', '保存しました。');
         } catch (\Exception $errors) {
             return back()->with('error', 'エラーが発生しました: ' . $errors->getMessage());
         }
