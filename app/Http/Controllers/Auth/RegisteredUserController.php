@@ -41,7 +41,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'nickname' => $request->nickname,
             'role' => 'member',
-            'status' => 'attending',
+            'status' => 'no_attending',
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -50,6 +50,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect(RouteServiceProvider::HOME)->with('message', 'ユーザー登録が完了しました。上部の「参加日程登録」から、練習参加する日程の編集をお願いします。');
     }
 }
