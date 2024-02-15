@@ -27,7 +27,7 @@
             @foreach ($elected_courts as $e_court)
                 <div class="mt-8">
                     <label for="court" class="font-semibold mt-2">
-                        {{ $e_court->elected_date }},
+                        {{ convertyyyymmddTomd($e_court->elected_date) }},
                         {{ $registed_courts[$e_court->court_id - 1]["court_name"] }}
                         {{ $e_court->court_number }},
                         {{ convertHisToHi($e_court->start_time) }}~{{ convertHisToHi($e_court->end_time) }}

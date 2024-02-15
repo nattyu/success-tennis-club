@@ -32,7 +32,7 @@
                 @foreach ($postCourts as $p_court)
                     <th class="border border-black p-2">
                         <a href="{{ route('post-court.show', $p_court) }}" class="text-blue-600">
-                            {{ $p_court->elected_date }}<br>
+                            {{ convertyyyymmddTomd($p_court->elected_date) }} ({{ getDayOfWeek($p_court->elected_date)}})<br>
                             {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
                             {{ $p_court->court->court_name }} {{ $p_court->court_number }}<br>
                             {{ $p_court->user->nickname }}
@@ -53,10 +53,10 @@
                                 </a>
                             @endif
                             @if (auth()->user()->role == 'admin')
-                                <form action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-2">
+                                <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-2">
                                     @csrf
                                     {{ method_field('DELETE') }}
-                                    <button class="items-center justify-center">
+                                    <button class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>
@@ -84,5 +84,11 @@
                 });
             }
         });
+
+        function confirmDelete(userId) {
+            if (confirm('本当に削除しますか？')) {
+                document.getElementById('delete-form-' + userId).submit();
+            }
+        }
     </script>
 </x-app-layout>

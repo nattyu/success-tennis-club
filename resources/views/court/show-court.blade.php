@@ -13,7 +13,7 @@
             </tr>
             <tr>
                 <td>日付</td>
-                <td>{{ $postCourt->elected_date }}</td>
+                <td>{{ convertyyyymmddTomd($postCourt->elected_date) }}</td>
             </tr>
             <tr>
                 <td>時間</td>

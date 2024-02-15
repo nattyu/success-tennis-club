@@ -24,7 +24,7 @@ class PostAttendanceController extends Controller
      */
     public function create()
     {
-        $elected_courts = PostCourt::all();
+        $elected_courts = PostCourt::orderBy('elected_date', 'asc')->orderBy('start_time', 'asc')->get();
         $registed_courts = RegistNewCourt::all();
 
         return view('attendance.post-attendance')->with([
