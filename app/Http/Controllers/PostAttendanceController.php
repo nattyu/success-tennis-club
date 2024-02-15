@@ -68,7 +68,13 @@ class PostAttendanceController extends Controller
                 $postAttendance = PostAttendance::create($validated);
             }
 
-            return back()->with('message', '保存しました。');
+            $target_user = User::find($userId[0]);
+            if ($target_user->status != 'attending') {
+                $target_user->status = 'attending';
+                $target_user->save();
+            }
+
+            return redirect()->route('post-court.index')->with('message', '保存しました。');
         } catch (\Exception $errors) {
             return back()->with('error', 'エラーが発生しました: ' . $errors->getMessage());
         }
