@@ -56,7 +56,7 @@
                                 <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-2">
                                     @csrf
                                     {{ method_field('DELETE') }}
-                                    <button class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
+                                    <button type="button" class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>
@@ -88,6 +88,10 @@
         function confirmDelete(userId) {
             if (confirm('本当に削除しますか？')) {
                 document.getElementById('delete-form-' + userId).submit();
+            } else {
+                // 今いるページにリダイレクトさせる
+                window.location.href = "{{ url()->current() }}";
+                confirm('削除しませんでした');
             }
         }
     </script>

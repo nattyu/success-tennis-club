@@ -6,6 +6,11 @@
     </x-slot>
 
     <div class="max-w-7xl mx-auto px-6">
+        @if (session('message'))
+            <div class="text-red-600 font-bold">
+                {{ session('message') }}
+            </div>
+        @endif
         <table>
             <tr>
                 <td>作成者</td>
@@ -33,12 +38,24 @@
                 編集
             </x-primary-button>
         </a>
-        <form action="{{ route('post-court.destroy', $postCourt) }}" method="POST">
+        <form id="delete-form-{{ $postCourt->id }}" action="{{ route('post-court.destroy', $postCourt) }}" method="POST">
             @csrf
             {{ method_field('DELETE') }}
-            <x-primary-button class="mt-4 bg-red-600">
+            <x-primary-button type="button" class="mt-4 bg-red-600" onclick="confirmDelete({{ $postCourt->id }})">
                 削除
             </x-primary-button>
         </form>
     </div>
+
+    <script>
+        function confirmDelete(courtId) {
+            if (confirm('本当に削除しますか？')) {
+                document.getElementById('delete-form-' + courtId).submit();
+            } else {
+                // 今いるページにリダイレクトさせる
+                window.location.href = "{{ url()->current() }}";
+                confirm('削除しませんでした');
+            }
+        }
+    </script>
 </x-app-layout>

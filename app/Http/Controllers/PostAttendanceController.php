@@ -93,12 +93,33 @@ class PostAttendanceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($user_id)
+    public function edit(Request $request, $user_id)
     {
+        // セレクトボックスで選択した値
+        $select = intval($request->year_month);
+
+        // デフォルトは2024/3
+        if ($select < 1 || $select > 12) {
+            $select = 3;
+        }
+
+        // 選択された月の始まりと終わりの日付を計算
+        $year = 2024; // 仮の年
+        $month_start = sprintf('%04d-%02d-01', $year, $select);
+        $month_end = date('Y-m-d', strtotime("$month_start +1 month"));
+
+        // 選択された月の範囲でクエリ
+        $elected_courts = PostCourt::where('elected_date', '>=', $month_start)
+                            ->where('elected_date', '<', $month_end)
+                            ->orderBy('elected_date', 'asc')
+                            ->orderBy('start_time', 'asc')
+                            ->get();
+
         $postAttendance = PostAttendance::where('user_id', $user_id)->get();
-        $elected_courts = PostCourt::orderBy('elected_date', 'asc')->orderBy('start_time', 'asc')->get();
+        // $elected_courts = PostCourt::orderBy('elected_date', 'asc')->orderBy('start_time', 'asc')->get();
         $registed_courts = RegistNewCourt::all();
         return view('attendance.edit-attendance')->with([
+            'select' => $select,
             'postAttendance' => $postAttendance,
             'elected_courts' => $elected_courts,
             'registed_courts' => $registed_courts,

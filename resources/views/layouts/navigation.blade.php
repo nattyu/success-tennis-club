@@ -18,7 +18,7 @@
                     <x-nav-link :href="route('post-court.create')" :active="request()->routeIs('post-court.create')">
                         コート日程作成
                     </x-nav-link>
-                    @if (auth()->user()->status != 'attending')
+                    @if (auth()->user()->status != 'attending' || auth()->user()->role == 'admin')
                         <x-nav-link :href="route('post-attendance.create')" :active="request()->routeIs('post-attendance.create')">
                             参加日程登録
                         </x-nav-link>
