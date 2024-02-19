@@ -29,13 +29,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('post-court', PostCourtController::class);
+    Route::resource('post-attendance', PostAttendanceController::class);
+    Route::get('regist/regist-new-court', [RegistNewCourtController::class, 'create'])->name('regist-new-court.create');
+    Route::post('regist', [RegistNewCourtController::class, 'store'])->name('regist-new-court.store');
 });
-
-Route::resource('post-court', PostCourtController::class);
-
-Route::resource('post-attendance', PostAttendanceController::class);
-
-Route::get('regist/regist-new-court', [RegistNewCourtController::class, 'create'])->name('regist-new-court.create');
-Route::post('regist', [RegistNewCourtController::class, 'store'])->name('regist-new-court.store');
 
 require __DIR__.'/auth.php';

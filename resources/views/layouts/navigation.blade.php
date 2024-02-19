@@ -18,11 +18,6 @@
                     <x-nav-link :href="route('post-court.create')" :active="request()->routeIs('post-court.create')">
                         コート日程作成
                     </x-nav-link>
-                    @if (auth()->user()->status != 'attending' || auth()->user()->role == 'admin')
-                        <x-nav-link :href="route('post-attendance.create')" :active="request()->routeIs('post-attendance.create')">
-                            参加日程登録
-                        </x-nav-link>
-                    @endif
                     @if (auth()->user()->role == 'admin')
                         <x-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
                             コート新規登録
@@ -85,9 +80,6 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('post-court.create')" :active="request()->routeIs('post-court.create')">
                 コート日程作成
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('post-attendance.create')" :active="request()->routeIs('post-attendance.create')">
-                参加日程登録
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
                 コート新規登録

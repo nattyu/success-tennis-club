@@ -86,8 +86,7 @@ class PostAttendanceController extends Controller
      */
     public function show($user_id)
     {
-        $postAttendance = PostAttendance::where('user_id', $user_id)->get();
-        return view('attendance.show-attendance')->with('postAttendance', $postAttendance);
+        //
     }
 
     /**
@@ -179,11 +178,10 @@ class PostAttendanceController extends Controller
     {
         $delete_user_attendance = PostAttendance::where('user_id', $id)->get();
         $target_user = User::find($id);
-        $target_user->status = 'exclusion';
-        $target_user->save();
         foreach ($delete_user_attendance as $d_u_attendance) {
             $d_u_attendance->delete();
         }
+        $target_user->delete();
         return redirect()->route('post-court.index')->with('message', '削除しました');
     }
 }

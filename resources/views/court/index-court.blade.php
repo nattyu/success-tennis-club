@@ -45,7 +45,7 @@
                     <tr class="border border-black">
                         <td class="flex items-center py-4">
                             <p class="mx-2">{{ $user->nickname }}</p>
-                            @if ($user->id === auth()->user()->id && $user->status == 'attending' || auth()->user()->role == 'admin')
+                            @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
                                 <a href="{{ route('post-attendance.edit', $user->id) }}" class="">
                                     <button class="items-center justify-center">
                                         <i class="fa-solid fa-pencil"></i>

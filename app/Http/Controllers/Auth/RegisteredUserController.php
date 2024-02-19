@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\PostAttendance;
+use App\Models\PostCourt;
 
 class RegisteredUserController extends Controller
 {
@@ -48,8 +50,18 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        $elected_courts = PostCourt::all();
+
+        foreach ($elected_courts as $e_court) {
+            $attendance = PostAttendance::create([
+                'user_id' => $user->id,
+                'elected_court_id' => $e_court->id,
+                'attend_flg' => '-',
+            ]);
+        }
+
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME)->with('message', 'ユーザー登録が完了しました。上部の「参加日程登録」から、練習参加する日程の編集をお願いします。');
+        return redirect(RouteServiceProvider::HOME)->with('message', 'ユーザー登録が完了しました。');
     }
 }
