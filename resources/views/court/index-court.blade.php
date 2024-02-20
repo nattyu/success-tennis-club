@@ -52,17 +52,17 @@
                     @if ($user->status != 'exclusion')
                         <tr class="">
                             <td class="py-3 sm:py-4 sticky left-0 border-t border-b border-gray-500 bg-gray-300">
-                                <div class="flex items-center">
-                                    <p class="mx-1 sm:mx-2">{{ $user->nickname }}</p>
+                                <div class="flex flex-wrap items-center sm:w-12">
+                                    <p class="mx-1">{{ $user->nickname }}</p>
                                     @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
-                                        <a href="{{ route('post-attendance.edit', $user->id) }}" class="mx-1 sm:mx-2">
+                                        <a href="{{ route('post-attendance.edit', $user->id) }}" class="mx-1">
                                             <button class="items-center justify-center">
                                                 <i class="fa-solid fa-pencil"></i>
                                             </button>
                                         </a>
                                     @endif
                                     @if (auth()->user()->role == 'admin')
-                                        <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-1 sm:mx-2">
+                                        <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-1">
                                             @csrf
                                             {{ method_field('DELETE') }}
                                             <button type="button" class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">

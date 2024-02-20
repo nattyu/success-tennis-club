@@ -15,7 +15,7 @@
             @csrf
             <div class="my-2 sm:my-4">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="title" class="font-semibold mt-4">コート名</label>
+                    <label for="title" class="font-semibold mt-4 dark:text-gray-100">コート名</label>
                     <x-input-error :messages="$errors->get('court_name')" class="mt-2" />
                     <input type="text" name="court_name" class="w-auto py-2 border border-gray-300 rounded-md" id="court_name" value="{{ old('court_name') }}">
                 </div>
@@ -23,7 +23,7 @@
 
             <div class="my-2 sm:my-4">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="title" class="font-semibold mt-4">住所</label>
+                    <label for="title" class="font-semibold mt-4 dark:text-gray-100">住所</label>
                     <x-input-error :messages="$errors->get('address')" class="mt-2" />
                     <input type="text" name="address" class="w-auto py-2 border border-gray-300 rounded-md" id="address" value="{{ old('address') }}">
                 </div>
