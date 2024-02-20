@@ -52,7 +52,7 @@
                     @if ($user->status != 'exclusion')
                         <tr class="">
                             <td class="py-3 sm:py-4 sticky left-0 border-t border-b border-gray-500 bg-gray-300">
-                                <div class="flex flex-wrap items-center sm:w-12">
+                                <div class="flex flex-wrap items-center">
                                     <p class="mx-1">{{ $user->nickname }}</p>
                                     @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
                                         <a href="{{ route('post-attendance.edit', $user->id) }}" class="mx-1">
