@@ -13,7 +13,7 @@
         @endif
         <form id="year_month_select" class="m-2 sm:m-4">
             @csrf
-            <select name="year_month" id="year_month" class="text-xs sm:text-base">
+            <select name="year_month" id="year_month" class="text-sm sm:text-base">
                 <option value="3" {{ $select == '3' ? 'selected': '' }}>2024年3月</option>
                 <option value="4" {{ $select == '4' ? 'selected': '' }}>2024年4月</option>
                 <option value="5" {{ $select == '5' ? 'selected': '' }}>2024年5月</option>
@@ -27,7 +27,7 @@
             </select>
         </form>
         <div class="whitespace-nowrap overflow-auto w-[95%] top-0">
-            <table class="m-2 sm:m-4 border-collapse text-xs sm:text-base">
+            <table class="m-2 sm:m-4 border-collapse text-sm sm:text-base">
                 <tr class="sticky top-0 bg-gray-300">
                     <th class="sticky left-0 border-t border-b border-gray-500 bg-gray-300"></th>
                     @foreach ($postCourts as $p_court)
