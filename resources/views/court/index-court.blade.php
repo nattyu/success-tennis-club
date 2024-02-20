@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-base sm:text-xl text-gray-800 dark:text-gray-200 leading-tight">
             コート一覧
         </h2>
     </x-slot>
@@ -11,9 +11,9 @@
                 {{ session('message') }}
             </div>
         @endif
-        <form id="year_month_select" class="m-4">
+        <form id="year_month_select" class="m-2 sm:m-4">
             @csrf
-            <select name="year_month" id="year_month">
+            <select name="year_month" id="year_month" class="text-xs sm:text-base">
                 <option value="3" {{ $select == '3' ? 'selected': '' }}>2024年3月</option>
                 <option value="4" {{ $select == '4' ? 'selected': '' }}>2024年4月</option>
                 <option value="5" {{ $select == '5' ? 'selected': '' }}>2024年5月</option>
@@ -26,53 +26,57 @@
                 <option value="12" {{ $select == '12' ? 'selected': '' }}>2024年12月</option>
             </select>
         </form>
-        <table class="m-4">
-            <tr class="border border-black">
-                <th></th>
-                @foreach ($postCourts as $p_court)
-                    <th class="border border-black p-2">
-                        <a href="{{ route('post-court.show', $p_court) }}" class="text-blue-600">
-                            {{ convertyyyymmddTomd($p_court->elected_date) }} ({{ getDayOfWeek($p_court->elected_date)}})<br>
-                            {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
-                            {{ $p_court->court->court_name }} {{ $p_court->court_number }}<br>
-                            {{ $p_court->user->nickname }}
-                        </a>
-                    </th>
-                @endforeach
-            </tr>
-            @foreach ($users as $user)
-                @if ($user->status != 'exclusion')
-                    <tr class="border border-black">
-                        <td class="flex items-center py-4">
-                            <p class="mx-2">{{ $user->nickname }}</p>
-                            @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
-                                <a href="{{ route('post-attendance.edit', $user->id) }}" class="">
-                                    <button class="items-center justify-center">
-                                        <i class="fa-solid fa-pencil"></i>
-                                    </button>
-                                </a>
-                            @endif
-                            @if (auth()->user()->role == 'admin')
-                                <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-2">
-                                    @csrf
-                                    {{ method_field('DELETE') }}
-                                    <button type="button" class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </form>
-                            @endif
-                        </td>
-                        @foreach ($postCourts as $p_court)
-                            @foreach ($attendances as $attendance)
-                                @if ($user->id === $attendance->user_id && $p_court->id === $attendance->elected_court_id)
-                                    <td class="border border-black text-center">{{ $attendance->attend_flg }}</td>
-                                @endif
+        <div class="whitespace-nowrap overflow-auto w-[95%] top-0">
+            <table class="m-2 sm:m-4 border-collapse text-xs sm:text-base">
+                <tr class="sticky top-0 bg-gray-300">
+                    <th class="sticky left-0 border-t border-b border-gray-500 bg-gray-300"></th>
+                    @foreach ($postCourts as $p_court)
+                        <th class=" border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">
+                            <a href="{{ route('post-court.show', $p_court) }}" class="text-blue-600">
+                                {{ convertyyyymmddTomd($p_court->elected_date) }} ({{ getDayOfWeek($p_court->elected_date)}})<br>
+                                {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
+                                {{ $p_court->court->court_name }} {{ $p_court->court_number }}<br>
+                                {{ $p_court->user->nickname }}
+                            </a>
+                        </th>
+                    @endforeach
+                </tr>
+                @foreach ($users as $user)
+                    @if ($user->status != 'exclusion')
+                        <tr class="">
+                            <td class="py-3 sm:py-4 sticky left-0 border-t border-b border-gray-500 bg-gray-300">
+                                <div class="flex items-center">
+                                    <p class="mx-1 sm:mx-2">{{ $user->nickname }}</p>
+                                    @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
+                                        <a href="{{ route('post-attendance.edit', $user->id) }}" class="mx-1 sm:mx-2">
+                                            <button class="items-center justify-center">
+                                                <i class="fa-solid fa-pencil"></i>
+                                            </button>
+                                        </a>
+                                    @endif
+                                    @if (auth()->user()->role == 'admin')
+                                        <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-1 sm:mx-2>
+                                            @csrf
+                                            {{ method_field('DELETE') }}
+                                            <button type="button" class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </td>
+                            @foreach ($postCourts as $p_court)
+                                @foreach ($attendances as $attendance)
+                                    @if ($user->id === $attendance->user_id && $p_court->id === $attendance->elected_court_id)
+                                        <td class="border-b border-gray-500 text-center p-1 sm:p-2 sm:w-32">{{ $attendance->attend_flg }}</td>
+                                    @endif
+                                @endforeach
                             @endforeach
-                        @endforeach
-                    </tr>
-                @endif
-            @endforeach
-        </table>
+                        </tr>
+                    @endif
+                @endforeach
+            </table>
+        </div>
     </div>
 
     <script>

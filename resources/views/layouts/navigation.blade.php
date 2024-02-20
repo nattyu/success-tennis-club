@@ -81,9 +81,11 @@
             <x-responsive-nav-link :href="route('post-court.create')" :active="request()->routeIs('post-court.create')">
                 コート日程作成
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
-                コート新規登録
-            </x-responsive-nav-link>
+            @if (auth()->user()->role == 'admin')
+                <x-responsive-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
+                    コート新規登録
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
