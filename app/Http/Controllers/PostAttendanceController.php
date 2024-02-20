@@ -24,13 +24,7 @@ class PostAttendanceController extends Controller
      */
     public function create()
     {
-        $elected_courts = PostCourt::orderBy('elected_date', 'asc')->orderBy('start_time', 'asc')->get();
-        $registed_courts = RegistNewCourt::all();
-
-        return view('attendance.post-attendance')->with([
-            'elected_courts' => $elected_courts,
-            'registed_courts' => $registed_courts,
-        ]);
+        //
     }
 
     /**
@@ -38,46 +32,7 @@ class PostAttendanceController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // フォームから送信されたデータを取得
-            $attendFlgs = $request->input('attend_flg');
-            $attendCourts = $request->input('attendances');
-            $userId = $request->input('user_id');
-
-            for ($count = 0; $count < count($attendFlgs); $count++) {
-                // バリデーションを追加
-                $validator = Validator::make([
-                    'user_id' => $userId[$count],
-                    'elected_court_id' => $attendCourts[$count],
-                    'attend_flg' => $attendFlgs[$count],
-                ], [
-                    'user_id' => 'required',
-                    'elected_court_id' => 'required',
-                    'attend_flg' => 'required',
-                ]);
-
-                // バリデーションが失敗した場合はエラーメッセージを取得し、リダイレクト
-                if ($validator->fails()) {
-                    return back()->with('error', '入力が正しくありません。')->withErrors($validator);
-                }
-
-                $validated['user_id'] = $userId[$count];
-                $validated['elected_court_id'] = $attendCourts[$count];
-                $validated['attend_flg'] = $attendFlgs[$count];
-
-                $postAttendance = PostAttendance::create($validated);
-            }
-
-            $target_user = User::find($userId[0]);
-            if ($target_user->status != 'attending') {
-                $target_user->status = 'attending';
-                $target_user->save();
-            }
-
-            return redirect()->route('post-court.index')->with('message', '保存しました。');
-        } catch (\Exception $errors) {
-            return back()->with('error', 'エラーが発生しました: ' . $errors->getMessage());
-        }
+        //
     }
 
 

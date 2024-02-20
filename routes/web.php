@@ -31,7 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('post-court', PostCourtController::class);
-    Route::resource('post-attendance', PostAttendanceController::class);
+    Route::resource('post-attendance', PostAttendanceController::class)
+        ->only(['edit', 'update', 'destroy']);
     Route::get('regist/regist-new-court', [RegistNewCourtController::class, 'create'])->name('regist-new-court.create');
     Route::post('regist', [RegistNewCourtController::class, 'store'])->name('regist-new-court.store');
 });
