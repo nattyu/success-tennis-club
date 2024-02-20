@@ -43,7 +43,11 @@
                                 {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
                                 {{ convertCourtName($p_court->court->court_name) }}<br>
                                 {{ convertCourtNumber($p_court->court_number) }}<br>
-                                {{ $p_court->user->nickname }}
+                                @if (isset($p_court->user->nickname))
+                                    {{ $p_court->user->nickname }}
+                                @else
+                                    unknown
+                                @endif
                             </a>
                         </th>
                     @endforeach
