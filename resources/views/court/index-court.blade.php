@@ -75,7 +75,7 @@
                             @foreach ($postCourts as $p_court)
                                 @foreach ($attendances as $attendance)
                                     @if ($user->id === $attendance->user_id && $p_court->id === $attendance->elected_court_id)
-                                        <td class="border-b border-gray-500 text-center p-1 sm:p-2 sm:w-32">{{ $attendance->attend_flg }}</td>
+                                        <td class="border-b border-gray-500 text-center p-1 sm:p-2 sm:w-32 dark:text-gray-100">{{ $attendance->attend_flg }}</td>
                                     @endif
                                 @endforeach
                             @endforeach

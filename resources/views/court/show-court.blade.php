@@ -11,7 +11,7 @@
                 {{ session('message') }}
             </div>
         @endif
-        <table class="m-2 sm:m-4">
+        <table class="m-2 sm:m-4 dark:text-gray-100">
             <tr>
                 <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">作成者</td>
                 <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->user->nickname }}</td>

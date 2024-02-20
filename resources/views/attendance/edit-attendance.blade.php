@@ -36,10 +36,10 @@
             @method('patch')
             <div class="">
                 <div class="w-full flex flex-col">
-                    <label for="user_name" class="font-semibold mt-2 sm:mt-4">回答者 {{ auth()->user()->nickname }}</label>
+                    <label for="user_name" class="font-semibold mt-2 sm:mt-4 dark:text-gray-100">回答者 {{ auth()->user()->nickname }}</label>
                 </div>
             </div>
-            <table class="mt-2 sm:mt-4">
+            <table class="mt-2 sm:mt-4 dark:text-gray-100">
                 <tr>
                     <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">日付</td>
                     <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">コート名</td>

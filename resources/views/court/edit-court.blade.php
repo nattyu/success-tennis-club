@@ -16,13 +16,13 @@
             @method('patch')
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="elected_member" class="font-semibold mt-4">当選者 {{ auth()->user()->nickname }}</label>
+                    <label for="elected_member" class="font-semibold mt-4 dark:text-gray-100">当選者 {{ auth()->user()->nickname }}</label>
                 </div>
             </div>
 
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="elected_date" class="font-semibold mt-4">日付</label>
+                    <label for="elected_date" class="font-semibold mt-4 dark:text-gray-100">日付</label>
                     <x-input-error :messages="$errors->get('date')" class="mt-2" />
                     <input type="date" class="form-control" id="elected_date" name="elected_date" value="{{ old('elected_date', $postCourt->elected_date) }}">
                 </div>
@@ -30,7 +30,7 @@
 
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="court_id" class="font-semibold mt-4">コート選択</label>
+                    <label for="court_id" class="font-semibold mt-4 dark:text-gray-100">コート選択</label>
                     <x-input-error :messages="$errors->get('court_id')" class="mt-2" />
                     <select type="text" class="form-control" name="court_id" required>
                         <option disabled style='display:none;' @if (empty($postCourt->court_id)) selected @endif>選択してください</option>
@@ -43,7 +43,7 @@
 
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="court_number" class="font-semibold mt-4">コート番号</label>
+                    <label for="court_number" class="font-semibold mt-4 dark:text-gray-100">コート番号</label>
                     <x-input-error :messages="$errors->get('court_number')" class="mt-2" />
                     <input type="text" name="court_number" class="w-auto py-2 border border-gray-300 rounded-md" id="court_number" value="{{ old('court_number', $postCourt->court_number) }}">
                 </div>
@@ -51,7 +51,7 @@
 
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="start_time" class="font-semibold mt-4">開始時間</label>
+                    <label for="start_time" class="font-semibold mt-4 dark:text-gray-100">開始時間</label>
                     <x-input-error :messages="$errors->get('start_time')" class="mt-2" />
                     <select type="text" class="form-control" name="start_time" required>
                         <option disabled style='display:none;' @if (empty($postCourt->start_time)) selected @endif>選択してください</option>
@@ -64,7 +64,7 @@
 
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="end_time" class="font-semibold mt-4">終了時間</label>
+                    <label for="end_time" class="font-semibold mt-4 dark:text-gray-100">終了時間</label>
                     <x-input-error :messages="$errors->get('end_time')" class="mt-2" />
                     <select type="text" class="form-control" name="end_time" required>
                         <option disabled style='display:none;' @if (empty($postCourt->end_time)) selected @endif>選択してください</option>
