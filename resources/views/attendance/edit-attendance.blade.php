@@ -61,7 +61,7 @@
                         <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertCourtName($registed_courts[$e_court->court_id - 1]["court_name"]) }}</td>
                         <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $e_court->court_number }}</td>
                         <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertHisToHi($e_court->start_time) }}~{{ convertHisToHi($e_court->end_time) }}</td>
-                        <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">
+                        <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32 dark:text-gray-900">
                             <select type="text" class="form-control w-16" name="attend_flg[]">
                                 <option value="-" @if ($filteredPostAttendance->attend_flg == "-") selected @endif>-</option>
                                 <option value="〇" @if ($filteredPostAttendance->attend_flg == "〇") selected @endif>〇</option>
