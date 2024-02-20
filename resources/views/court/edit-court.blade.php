@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-base sm:text-xl text-gray-800 dark:text-gray-200 leading-tight">
             当選コート編集フォーム
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-7xl mx-auto px-6 text-sm sm:text-base">
         @if (session('message'))
             <div class="text-red-600 font-bold">
                 {{ session('message') }}
@@ -35,7 +35,7 @@
                     <select type="text" class="form-control" name="court_id" required>
                         <option disabled style='display:none;' @if (empty($postCourt->court_id)) selected @endif>選択してください</option>
                         @foreach($registed_courts as $r_court)
-                            <option value="{{ old('court_id', $postCourt->court_id) }}" @if (isset($r_court->court_id) && ($r_court->court_id === $postCourt->court_id)) selected @endif>{{ old('court_id', $postCourt->court->court_name) }}</option>
+                            <option value="{{ $r_court->court_name }}">{{ $r_court->court_name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -75,7 +75,7 @@
                 </div>
             </div>
 
-            <x-primary-button class="mt-4">
+            <x-primary-button class="my-4">
                 更新
             </x-primary-button>
         </form>
