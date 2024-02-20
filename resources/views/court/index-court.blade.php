@@ -7,7 +7,7 @@
 
     <div class="max-w-7xl mx-auto px-6">
         @if (session('message'))
-            <div class="text-red-600 font-bold">
+            <div class="text-red-600 font-bold m-2 sm:m-4">
                 {{ session('message') }}
             </div>
         @endif
@@ -29,13 +29,20 @@
         <div class="whitespace-nowrap overflow-auto w-[95%] top-0">
             <table class="m-2 sm:m-4 border-collapse text-sm sm:text-base">
                 <tr class="sticky top-0 bg-gray-300">
-                    <th class="sticky left-0 border-t border-b border-gray-500 bg-gray-300"></th>
+                    <th class="sticky left-0 border-t border-b border-gray-500 bg-gray-300">
+                        日付<br>
+                        時間<br>
+                        コート名<br>
+                        コート番号<br>
+                        当選者
+                    </th>
                     @foreach ($postCourts as $p_court)
-                        <th class=" border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">
+                        <th class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">
                             <a href="{{ route('post-court.show', $p_court) }}" class="text-blue-600">
                                 {{ convertyyyymmddTomd($p_court->elected_date) }} ({{ getDayOfWeek($p_court->elected_date)}})<br>
                                 {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
-                                {{ convertCourtName($p_court->court->court_name) }} {{ convertCourtNumber($p_court->court_number) }}<br>
+                                {{ convertCourtName($p_court->court->court_name) }}<br>
+                                {{ convertCourtNumber($p_court->court_number) }}<br>
                                 {{ $p_court->user->nickname }}
                             </a>
                         </th>

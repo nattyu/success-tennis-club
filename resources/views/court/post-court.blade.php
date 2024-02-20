@@ -7,20 +7,20 @@
 
     <div class="max-w-7xl mx-auto px-6">
         @if (session('message'))
-            <div class="text-red-600 font-bold">
+            <div class="text-red-600 font-bold m-2 sm:m-4">
                 {{ session('message') }}
             </div>
         @endif
         <form method="post" action="{{ route('post-court.store') }}">
             @csrf
             <div class="">
-                <div class="w-full flex flex-col">
+                <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="elected_member" class="font-semibold mt-4">当選者 {{ auth()->user()->nickname }}</label>
                 </div>
             </div>
 
             <div class="">
-                <div class="w-full flex flex-col">
+                <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="elected_date" class="font-semibold mt-4">日付</label>
                     <x-input-error :messages="$errors->get('date')" class="mt-2" />
                     <input type="date" class="form-control" id="elected_date" name="elected_date">
@@ -28,7 +28,7 @@
             </div>
 
             <div class="">
-                <div class="w-full flex flex-col">
+                <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="court_id" class="font-semibold mt-4">コート選択</label>
                     <x-input-error :messages="$errors->get('court_id')" class="mt-2" />
                     <select type="text" class="form-control" name="court_id" required>
@@ -41,7 +41,7 @@
             </div>
 
             <div class="">
-                <div class="w-full flex flex-col">
+                <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="court_number" class="font-semibold mt-4">コート番号</label>
                     <x-input-error :messages="$errors->get('court_number')" class="mt-2" />
                     <input type="text" name="court_number" class="w-auto py-2 border border-gray-300 rounded-md" id="court_number" value="{{ old('court_number') }}">
@@ -49,7 +49,7 @@
             </div>
 
             <div class="">
-                <div class="w-full flex flex-col">
+                <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="start_time" class="font-semibold mt-4">開始時間</label>
                     <x-input-error :messages="$errors->get('start_time')" class="mt-2" />
                     <select type="text" class="form-control" name="start_time" required>
@@ -62,7 +62,7 @@
             </div>
 
             <div class="">
-                <div class="w-full flex flex-col">
+                <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="end_time" class="font-semibold mt-4">終了時間</label>
                     <x-input-error :messages="$errors->get('end_time')" class="mt-2" />
                     <select type="text" class="form-control" name="end_time" required>

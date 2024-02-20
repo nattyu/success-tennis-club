@@ -11,40 +11,43 @@
                 {{ session('message') }}
             </div>
         @endif
-        <table>
+        <table class="m-2 sm:m-4">
             <tr>
-                <td>作成者</td>
-                <td>{{ $postCourt->user->nickname }}</td>
+                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">作成者</td>
+                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->user->nickname }}</td>
             </tr>
             <tr>
-                <td>日付</td>
-                <td>{{ convertyyyymmddTomd($postCourt->elected_date) }}</td>
+                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">日付</td>
+                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertyyyymmddTomd($postCourt->elected_date) }}</td>
             </tr>
             <tr>
-                <td>時間</td>
-                <td>{{ convertHisToHi($postCourt->start_time) }}~{{ convertHisToHi($postCourt->end_time) }}</td>
+                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">時間</td>
+                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertHisToHi($postCourt->start_time) }}~{{ convertHisToHi($postCourt->end_time) }}</td>
             </tr>
             <tr>
-                <td>コート</td>
-                <td>{{ $postCourt->court->court_name }}</td>
+                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">コート</td>
+                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->court->court_name }}</td>
             </tr>
             <tr>
-                <td>コート番号</td>
-                <td>{{ $postCourt->court_number }}</td>
+                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">コート番号</td>
+                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->court_number }}</td>
             </tr>
         </table>
-        <a href="{{ route('post-court.edit', $postCourt) }}">
-            <x-primary-button class="mt-4">
-                編集
-            </x-primary-button>
-        </a>
-        <form id="delete-form-{{ $postCourt->id }}" action="{{ route('post-court.destroy', $postCourt) }}" method="POST">
-            @csrf
-            {{ method_field('DELETE') }}
-            <x-primary-button type="button" class="mt-4 bg-red-600" onclick="confirmDelete({{ $postCourt->id }})">
-                削除
-            </x-primary-button>
-        </form>
+        <div class="m-2 sm:m-4 flex">
+            <a href="{{ route('post-court.edit', $postCourt) }}">
+                <x-primary-button class="mt-4">
+                    編集
+                </x-primary-button>
+            </a>
+            <form id="delete-form-{{ $postCourt->id }}" action="{{ route('post-court.destroy', $postCourt) }}" method="POST" class="ml-4">
+                @csrf
+                {{ method_field('DELETE') }}
+                <x-primary-button type="button" class="mt-4 bg-red-600" onclick="confirmDelete({{ $postCourt->id }})">
+                    削除
+                </x-primary-button>
+            </form>
+        </div>
+        
     </div>
 
     <script>
