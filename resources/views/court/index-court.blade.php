@@ -62,7 +62,7 @@
                                         </a>
                                     @endif
                                     @if (auth()->user()->role == 'admin')
-                                        <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-1 sm:mx-2>
+                                        <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-1 sm:mx-2">
                                             @csrf
                                             {{ method_field('DELETE') }}
                                             <button type="button" class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
