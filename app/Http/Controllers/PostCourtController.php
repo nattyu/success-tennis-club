@@ -136,7 +136,7 @@ class PostCourtController extends Controller
 
         $postCourt->update($validated);
 
-        return back()->with('message', '更新しました');
+        return redirect()->route('post-court.index')->with('message', '更新しました');
     }
 
     /**

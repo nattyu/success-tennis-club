@@ -165,7 +165,7 @@ class PostAttendanceController extends Controller
                 $postAttendance->update($validated);
             }
 
-            return back()->with('message', '更新しました');
+            return redirect()->route('post-court.index')->with('message', '更新しました');
         } catch (\Exception $errors) {
             return back()->with('error', 'エラーが発生しました: ' . $errors->getMessage());
         }

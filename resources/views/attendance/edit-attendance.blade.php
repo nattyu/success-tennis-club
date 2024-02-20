@@ -61,7 +61,7 @@
                         <option value="△" @if ($filteredPostAttendance->attend_flg == "△") selected @endif>△</option>
                         <option value="✕" @if ($filteredPostAttendance->attend_flg == "✕") selected @endif>✕</option>
                     </select>
-                    <input type="hidden" name="user_id[]" value="{{ auth()->user()->id }}">
+                    <input type="hidden" name="user_id[]" value="{{ $filteredPostAttendance->user_id }}">
                     <input type="hidden" name="attendances[]" value="{{ $e_court->id }}">
                     <input type="hidden" name="attendance_id[]" value="{{ $filteredPostAttendance->id }}">
                 </div>

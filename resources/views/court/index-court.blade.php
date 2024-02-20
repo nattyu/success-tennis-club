@@ -35,7 +35,7 @@
                             <a href="{{ route('post-court.show', $p_court) }}" class="text-blue-600">
                                 {{ convertyyyymmddTomd($p_court->elected_date) }} ({{ getDayOfWeek($p_court->elected_date)}})<br>
                                 {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
-                                {{ $p_court->court->court_name }} {{ $p_court->court_number }}<br>
+                                {{ convertCourtName($p_court->court->court_name) }} {{ convertCourtNumber($p_court->court_number) }}<br>
                                 {{ $p_court->user->nickname }}
                             </a>
                         </th>
