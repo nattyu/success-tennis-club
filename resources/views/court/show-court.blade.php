@@ -39,20 +39,22 @@
                 <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->court_number }}</td>
             </tr>
         </table>
-        <div class="m-2 sm:m-4 flex">
-            <a href="{{ route('post-court.edit', $postCourt) }}">
-                <x-primary-button class="mt-4">
-                    編集
-                </x-primary-button>
-            </a>
-            <form id="delete-form-{{ $postCourt->id }}" action="{{ route('post-court.destroy', $postCourt) }}" method="POST" class="ml-4">
-                @csrf
-                {{ method_field('DELETE') }}
-                <x-primary-button type="button" class="mt-4 bg-red-600" onclick="confirmDelete({{ $postCourt->id }})">
-                    削除
-                </x-primary-button>
-            </form>
-        </div>
+        @if ($postCourt->user->id === auth()->user()->id || auth()->user()->role == 'admin')
+            <div class="m-2 sm:m-4 flex">
+                <a href="{{ route('post-court.edit', $postCourt) }}">
+                    <x-primary-button class="mt-4">
+                        編集
+                    </x-primary-button>
+                </a>
+                <form id="delete-form-{{ $postCourt->id }}" action="{{ route('post-court.destroy', $postCourt) }}" method="POST" class="ml-4">
+                    @csrf
+                    {{ method_field('DELETE') }}
+                    <x-primary-button type="button" class="mt-4 bg-red-600" onclick="confirmDelete({{ $postCourt->id }})">
+                        削除
+                    </x-primary-button>
+                </form>
+            </div>
+        @endif
         
     </div>
 

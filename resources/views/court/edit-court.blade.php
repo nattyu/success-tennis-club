@@ -35,7 +35,7 @@
                     <select type="text" class="form-control" name="court_id" required>
                         <option disabled style='display:none;' @if (empty($postCourt->court_id)) selected @endif>選択してください</option>
                         @foreach($registed_courts as $r_court)
-                            <option value="{{ $r_court->court_name }}">{{ $r_court->court_name }}</option>
+                            <option value="{{ $r_court->id }}">{{ $r_court->court_name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -45,7 +45,7 @@
                 <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="court_number" class="font-semibold mt-4 dark:text-gray-100">コート番号</label>
                     <x-input-error :messages="$errors->get('court_number')" class="mt-2" />
-                    <input type="text" name="court_number" class="w-auto py-2 border border-gray-300 rounded-md" id="court_number" value="{{ old('court_number', $postCourt->court_number) }}">
+                    <input type="text" name="court_number" class="w-auto py-2 border border-gray-300 rounded-md" id="court_number" value="{{ old('court_number', $postCourt->court_number) }}" placeholder="コミプラ屋内は「屋内」と入力">
                 </div>
             </div>
 

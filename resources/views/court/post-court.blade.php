@@ -44,7 +44,7 @@
                 <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="court_number" class="font-semibold mt-4 dark:text-gray-100">コート番号</label>
                     <x-input-error :messages="$errors->get('court_number')" class="mt-2" />
-                    <input type="text" name="court_number" class="w-auto py-2 border border-gray-300 rounded-md" id="court_number" value="{{ old('court_number') }}">
+                    <input type="text" name="court_number" class="w-auto py-2 border border-gray-300 rounded-md" id="court_number" value="{{ old('court_number') }}" placeholder="コミプラ屋内の場合は「屋内」と入力">
                 </div>
             </div>
 
