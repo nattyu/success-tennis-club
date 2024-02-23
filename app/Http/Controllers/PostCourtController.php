@@ -33,6 +33,7 @@ class PostCourtController extends Controller
                             ->where('elected_date', '<', $month_end)
                             ->orderBy('elected_date', 'asc')
                             ->orderBy('start_time', 'asc')
+                            ->with('user')
                             ->get();
         
         $users = User::all();
