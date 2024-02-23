@@ -53,39 +53,37 @@
                     @endforeach
                 </tr>
                 @foreach ($users as $user)
-                    @if ($user->status != 'exclusion')
-                        <tr class="">
-                            <td class="py-3 sm:py-4 sticky left-0 border-t border-b border-gray-500 bg-gray-300">
-                                <div class="flex flex-wrap items-center">
-                                    <p class="mx-1">{{ $user->nickname }}</p>
-                                    @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
-                                        <a href="{{ route('post-attendance.edit', $user->id) }}" class="mx-1">
-                                            <button class="items-center justify-center">
-                                                <i class="fa-solid fa-pencil"></i>
-                                            </button>
-                                        </a>
-                                    @endif
-                                    @if (auth()->user()->role == 'admin')
-                                        <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-1">
-                                            @csrf
-                                            {{ method_field('DELETE') }}
-                                            <button type="button" class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </td>
-                            @foreach ($postCourts as $p_court)
-                                @php
-                                    $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->values();
-                                    $attend_dict = $attend_array[0];
-                                    $attend_flg = $attend_dict['attend_flg'];
-                                @endphp
-                                <td class="border-b border-gray-500 text-center p-1 sm:p-2 sm:w-32 dark:text-gray-100">{{ $attend_flg }}</td>
-                            @endforeach
-                        </tr>
-                    @endif
+                    <tr class="">
+                        <td class="py-3 sm:py-4 sticky left-0 border-t border-b border-gray-500 bg-gray-300">
+                            <div class="flex flex-wrap items-center">
+                                <p class="mx-1">{{ $user->nickname }}</p>
+                                @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
+                                    <a href="{{ route('post-attendance.edit', $user->id) }}" class="mx-1">
+                                        <button class="items-center justify-center">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </button>
+                                    </a>
+                                @endif
+                                @if (auth()->user()->role == 'admin')
+                                    <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-1">
+                                        @csrf
+                                        {{ method_field('DELETE') }}
+                                        <button type="button" class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </td>
+                        @foreach ($postCourts as $p_court)
+                            @php
+                                $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->values();
+                                $attend_dict = $attend_array[0];
+                                $attend_flg = $attend_dict['attend_flg'];
+                            @endphp
+                            <td class="border-b border-gray-500 text-center p-1 sm:p-2 sm:w-32 dark:text-gray-100">{{ $attend_flg }}</td>
+                        @endforeach
+                    </tr>
                 @endforeach
             </table>
         </div>
