@@ -10,30 +10,26 @@ use App\Models\PostAttendance;
 
 class PostCourtController extends Controller
 {
+    // 定数
+    private $start_times = ['6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
+    private $end_times = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {        
-        // セレクトボックスで選択した値
-        $select = intval($request->year_month);
-
-        // デフォルトは2024/3
-        if ($select < 1 || $select > 12) {
-            $select = 3;
-        }
-
-        // 選択された月の始まりと終わりの日付を計算
-        $year = 2024; // 仮の年
-        $month_start = sprintf('%04d-%02d-01', $year, $select);
-        $month_end = date('Y-m-d', strtotime("$month_start +1 month"));
+    {
+        // 選択された年月を取得
+        $select_and_month_num = calculateMonthRange($request);
+        $select = $select_and_month_num['select'];
 
         // 選択された月の範囲でクエリ
-        $postCourts = PostCourt::where('elected_date', '>=', $month_start)
-                            ->where('elected_date', '<', $month_end)
+        $postCourts = PostCourt::where('elected_date', '>=', $select_and_month_num['month_start'])
+                            ->where('elected_date', '<', $select_and_month_num['month_end'])
                             ->orderBy('elected_date', 'asc')
                             ->orderBy('start_time', 'asc')
                             ->with('user')
+                            ->with('court')
                             ->get();
         
         $users = User::all();
@@ -52,13 +48,11 @@ class PostCourtController extends Controller
     public function create()
     {
         $registed_courts = RegistNewCourt::all();
-        $start_times = ['6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
-        $end_times = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
-
+        
         return view('court.post-court')->with([
             'registed_courts' => $registed_courts,
-            'start_times' => $start_times,
-            'end_times' => $end_times,
+            'start_times' => $this->start_times,
+            'end_times' => $this->end_times,
         ]);
     }
 
@@ -110,13 +104,11 @@ class PostCourtController extends Controller
     public function edit(PostCourt $postCourt)
     {
         $registed_courts = RegistNewCourt::all();
-        $start_times = ['6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
-        $end_times = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
 
         return view('court.edit-court', compact('postCourt'))->with([
             'registed_courts' => $registed_courts,
-            'start_times' => $start_times,
-            'end_times' => $end_times,
+            'start_times' => $this->start_times,
+            'end_times' => $this->end_times,
         ]);
     }
 

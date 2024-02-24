@@ -67,3 +67,25 @@ if (!function_exists('convertCourtNumber')) {
         return $courtNumber;
     }
 }
+
+if (!function_exists('calculateMonthRange')) {
+    function calculateMonthRange($request) {
+        // セレクトボックスで選択した値
+        $select = intval($request->year_month);
+    
+        // デフォルトは今月の数字
+        if ($select < 1 || $select > 12) {
+            $select = date('n'); // 現在の月の数字を取得
+            if ($select < 3) {
+                $select = 3;
+            }
+        }
+    
+        // 選択された月の始まりと終わりの日付を計算
+        $year = date('Y'); // 西暦の数字
+        $month_start = sprintf('%04d-%02d-01', $year, $select);
+        $month_end = date('Y-m-t', strtotime($month_start));
+    
+        return ['select' => (string) $select, 'month_start' => $month_start, 'month_end' => $month_end];
+    }
+}
