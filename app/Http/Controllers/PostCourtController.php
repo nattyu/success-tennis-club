@@ -120,6 +120,7 @@ class PostCourtController extends Controller
     public function update(Request $request, PostCourt $postCourt)
     {
         $validated = $request->validate([
+            'user_id' => 'required',
             'court_id' => 'required',
             'court_number' => 'required',
             'start_time' => 'required',
@@ -127,7 +128,7 @@ class PostCourtController extends Controller
             'elected_date' => 'required',
         ]);
 
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = $request->input('elected_member');
 
         $postCourt->update($validated);
 
