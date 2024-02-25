@@ -42,6 +42,7 @@
             <table class="mt-2 sm:mt-4 dark:text-gray-100">
                 <tr>
                     <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">日付</td>
+                    <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">当選者</td>
                     <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">コート名</td>
                     <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">コート番号</td>
                     <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">時間</td>
@@ -58,6 +59,7 @@
                     @endphp
                     <tr>
                         <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertyyyymmddTomd($e_court->elected_date) }}</td>
+                        <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $e_court->user->nickname }}</td>
                         <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertCourtName($registed_courts[$e_court->court_id - 1]["court_name"]) }}</td>
                         <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $e_court->court_number }}</td>
                         <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertHisToHi($e_court->start_time) }}~{{ convertHisToHi($e_court->end_time) }}</td>
