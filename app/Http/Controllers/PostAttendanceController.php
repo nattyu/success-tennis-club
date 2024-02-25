@@ -54,7 +54,7 @@ class PostAttendanceController extends Controller
 
         // 選択された月の範囲でクエリ
         $elected_courts = PostCourt::where('elected_date', '>=', $select_and_month_num['month_start'])
-                            ->where('elected_date', '<', $select_and_month_num['month_end'])
+                            ->where('elected_date', '<=', $select_and_month_num['month_end'])
                             ->orderBy('elected_date', 'asc')
                             ->orderBy('start_time', 'asc')
                             ->get();
