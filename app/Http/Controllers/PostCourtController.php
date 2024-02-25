@@ -104,8 +104,10 @@ class PostCourtController extends Controller
     public function edit(PostCourt $postCourt)
     {
         $registed_courts = RegistNewCourt::all();
+        $users = User::all();
 
         return view('court.edit-court', compact('postCourt'))->with([
+            'users' => $users,
             'registed_courts' => $registed_courts,
             'start_times' => $this->start_times,
             'end_times' => $this->end_times,

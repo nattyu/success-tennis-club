@@ -16,7 +16,13 @@
             @method('patch')
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="elected_member" class="font-semibold mt-4 dark:text-gray-100">当選者 {{ auth()->user()->nickname }}</label>
+                    <label for="elected_member" class="font-semibold mt-4 dark:text-gray-100">当選者</label>
+                    <x-input-error :messages="$errors->get('elected_member')" class="mt-2" />
+                    <select type="text" class="form-control" name="elected_member" required>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->nickname }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
