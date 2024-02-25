@@ -127,9 +127,7 @@ class PostCourtController extends Controller
             'end_time' => 'required',
             'elected_date' => 'required',
         ]);
-
-        $validated['user_id'] = $request->input('elected_member');
-
+        
         $postCourt->update($validated);
 
         return redirect()->route('post-court.index')->with('message', '更新しました');

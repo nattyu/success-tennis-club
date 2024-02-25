@@ -16,9 +16,9 @@
             @method('patch')
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
-                    <label for="elected_member" class="font-semibold mt-4 dark:text-gray-100">当選者</label>
-                    <x-input-error :messages="$errors->get('elected_member')" class="mt-2" />
-                    <select type="text" class="form-control" name="elected_member" required>
+                    <label for="user_id" class="font-semibold mt-4 dark:text-gray-100">当選者</label>
+                    <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
+                    <select type="text" class="form-control" name="user_id" required>
                         @foreach($users as $user)
                             <option value="{{ $user->id }}">{{ $user->nickname }}</option>
                         @endforeach
