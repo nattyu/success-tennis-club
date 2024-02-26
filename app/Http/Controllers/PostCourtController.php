@@ -31,13 +31,13 @@ class PostCourtController extends Controller
                             ->with('user', 'court')
                             ->get();
         
-        $users = User::all();
+        $users = User::select('id', 'nickname')->get();
 
         // $postCourts の id を取得
         $postCourtIds = $postCourts->pluck('id')->toArray();
 
         // $postCourtIds でフィルタリングして PostAttendance を取得
-        $attendances = PostAttendance::whereIn('elected_court_id', $postCourtIds)->get();
+        $attendances = PostAttendance::whereIn('elected_court_id', $postCourtIds)->select('user_id', 'elected_court_id', 'attend_flg')->get();
         return view('court.index-court', compact('postCourts', 'select'))
             ->with([
                 'users' => $users,
