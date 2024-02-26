@@ -52,6 +52,17 @@
                         </th>
                     @endforeach
                 </tr>
+                <tr>
+                    <td class="sticky left-0 border-t border-b border-gray-500 bg-gray-300">
+                        参加人数
+                    </td>
+                    @foreach ($postCourts as $p_court)
+                        <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32 text-center">
+                            〇:{{ $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '〇')->count() }},
+                            △:{{ $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '△')->count() }}
+                        </td>
+                    @endforeach
+                </tr>
                 @foreach ($users as $user)
                     <tr class="">
                         <td class="py-3 sm:py-4 sticky left-0 border-t border-b border-gray-500 bg-gray-300">

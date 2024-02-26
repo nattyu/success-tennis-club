@@ -28,12 +28,16 @@ class PostCourtController extends Controller
                             ->where('elected_date', '<=', $select_and_month_num['month_end'])
                             ->orderBy('elected_date', 'asc')
                             ->orderBy('start_time', 'asc')
-                            ->with('user')
-                            ->with('court')
+                            ->with('user', 'court')
                             ->get();
         
         $users = User::all();
-        $attendances = PostAttendance::all();
+
+        // $postCourts の id を取得
+        $postCourtIds = $postCourts->pluck('id')->toArray();
+
+        // $postCourtIds でフィルタリングして PostAttendance を取得
+        $attendances = PostAttendance::whereIn('elected_court_id', $postCourtIds)->get();
         return view('court.index-court', compact('postCourts', 'select'))
             ->with([
                 'users' => $users,
