@@ -57,7 +57,7 @@
                         参加人数
                     </td>
                     @foreach ($postCourts as $p_court)
-                        <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32 text-center">
+                        <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32 text-center dark:text-gray-100">
                             〇:{{ $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '〇')->count() }},
                             △:{{ $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '△')->count() }}
                         </td>
