@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\RegistNewCourt;
 use App\Models\PostAttendance;
+use Illuminate\Support\Facades\Cache;
 
 class PostCourtController extends Controller
 {
@@ -19,31 +20,41 @@ class PostCourtController extends Controller
      */
     public function index(Request $request)
     {
-        // 選択された年月を取得
+        // リクエストから選択された年月の範囲を計算
         $select_and_month_num = calculateMonthRange($request);
         $select = $select_and_month_num['select'];
 
-        // 選択された月の範囲でクエリ
-        $postCourts = PostCourt::where('elected_date', '>=', $select_and_month_num['month_start'])
+        // キャッシュのキーを月の範囲に基づいて設定
+        $cacheKeyPostCourts = 'postCourts_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
+
+        // postCourtsデータをキャッシュから取得、またはクエリ実行してキャッシュに保存
+        $postCourts = Cache::remember($cacheKeyPostCourts, 3600, function () use ($select_and_month_num) {
+            return PostCourt::where('elected_date', '>=', $select_and_month_num['month_start'])
                             ->where('elected_date', '<=', $select_and_month_num['month_end'])
                             ->orderBy('elected_date', 'asc')
                             ->orderBy('start_time', 'asc')
                             ->with('user', 'court')
                             ->get();
-        
-        $users = User::select('id', 'nickname')->get();
+        });
 
-        // $postCourts の id を取得
+        // ユーザーデータを全て取得
+        $users = User::select('id', 'nickname')->get();
+        
+        // 抽出されたpostCourtsからIDを取得
         $postCourtIds = $postCourts->pluck('id')->toArray();
 
-        // $postCourtIds でフィルタリングして PostAttendance を取得
-        $attendances = PostAttendance::whereIn('elected_court_id', $postCourtIds)->select('user_id', 'elected_court_id', 'attend_flg')->get();
-        return view('court.index-court', compact('postCourts', 'select'))
-            ->with([
-                'users' => $users,
-                'postCourts' => $postCourts,
-                'attendances' => $attendances
-            ]);
+        // キャッシュキーを月の範囲に基づいて設定
+        $cacheKeyAttendances = 'attendances_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
+
+        // attendancesデータをキャッシュから取得、またはクエリ実行してキャッシュに保存
+        $attendances = Cache::remember($cacheKeyAttendances, 3600, function () use ($postCourtIds) {
+            return PostAttendance::whereIn('elected_court_id', $postCourtIds)
+                                ->select('user_id', 'elected_court_id', 'attend_flg')
+                                ->get();
+        });
+
+        // ビューにデータを渡してレンダリング
+        return view('court.index-court', compact('postCourts', 'select', 'users', 'attendances'));
     }
 
     /**
@@ -76,6 +87,12 @@ class PostCourtController extends Controller
         $validated['user_id'] = auth()->id();
 
         $postCourt = PostCourt::create($validated);
+
+        // 関連するキャッシュのクリア
+        $firstDayOfMonth = getFirstDayOfMonth($validated['elected_date']); // 月の初日を取得;
+        $lastDayOfMonth = getLastDayOfMonth($validated['elected_date']); // 月の最終日を取得;
+        Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
 
         $users = User::all();
         $elected_court_id = $postCourt->id;
@@ -131,7 +148,13 @@ class PostCourtController extends Controller
             'end_time' => 'required',
             'elected_date' => 'required',
         ]);
-        
+
+        // 関連するキャッシュのクリア
+        $firstDayOfMonth = getFirstDayOfMonth($validated['elected_date']); // 月の初日を取得;
+        $lastDayOfMonth = getLastDayOfMonth($validated['elected_date']); // 月の最終日を取得;
+        Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+
         $postCourt->update($validated);
 
         return redirect()->route('post-court.index')->with('message', '更新しました');
@@ -144,10 +167,19 @@ class PostCourtController extends Controller
     {
         $delete_court = PostCourt::find($id);
         $delete_attendance = PostAttendance::where('elected_court_id', $id)->get();
+        $elected_date = $delete_court->elected_date; // 日付を取得
+
         $delete_court->delete();
         foreach ($delete_attendance as $d_attendance) {
             $d_attendance->delete();
         }
+
+        // 関連するキャッシュのクリア
+        $firstDayOfMonth = getFirstDayOfMonth($elected_date); // 月の初日を取得;
+        $lastDayOfMonth = getLastDayOfMonth($elected_date); // 月の最終日を取得;
+        Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+
         return redirect()->route('post-court.index')->with('message', '削除しました');
     }
 }

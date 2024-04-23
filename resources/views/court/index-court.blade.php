@@ -26,10 +26,10 @@
                 <option value="12" {{ $select == '12' ? 'selected': '' }}>2024年12月</option>
             </select>
         </form>
-        <div class="whitespace-nowrap overflow-auto w-[95%] top-0">
+        <div class="whitespace-nowrap overflow-auto w-[95%] h-full">
             <table class="m-2 sm:m-4 border-collapse text-sm sm:text-base">
-                <tr class="sticky top-0 bg-gray-300">
-                    <th class="sticky left-0 border-t border-b border-gray-500 bg-gray-300">
+                <tr id="row-1" class="">
+                    <th class="sticky top-0 left-0 z-10 p-1 sm:p-2 sm:w-32 border-t border-b border-gray-500 bg-gray-300">
                         日付<br>
                         時間<br>
                         コート名<br>
@@ -37,7 +37,7 @@
                         当選者
                     </th>
                     @foreach ($postCourts as $p_court)
-                        <th class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">
+                        <th class="sticky top-0 z-0 border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32 bg-gray-300">
                             <a href="{{ route('post-court.show', $p_court) }}" class="text-blue-600">
                                 {{ convertyyyymmddTomd($p_court->elected_date) }} ({{ getDayOfWeek($p_court->elected_date)}})<br>
                                 {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
@@ -52,7 +52,7 @@
                         </th>
                     @endforeach
                 </tr>
-                <tr>
+                <tr id="row-2">
                     <td class="sticky left-0 border-t border-b border-gray-500 bg-gray-300">
                         参加人数
                     </td>
@@ -88,9 +88,8 @@
                         </td>
                         @foreach ($postCourts as $p_court)
                             @php
-                                $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->values();
-                                $attend_dict = $attend_array[0];
-                                $attend_flg = $attend_dict['attend_flg'];
+                                $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->first();
+                                $attend_flg = $attend_array ? $attend_array->attend_flg : 'null';
                             @endphp
                             <td class="border-b border-gray-500 text-center p-1 sm:p-2 sm:w-32 dark:text-gray-100">{{ $attend_flg }}</td>
                         @endforeach

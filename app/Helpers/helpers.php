@@ -89,3 +89,15 @@ if (!function_exists('calculateMonthRange')) {
         return ['select' => (string) $select, 'month_start' => $month_start, 'month_end' => $month_end];
     }
 }
+
+if (!function_exists('getFirstDayOfMonth')) {
+    function getFirstDayOfMonth($date) {
+        return date('Y-m-01', strtotime($date));
+    }
+}
+
+if (!function_exists('getLastDayOfMonth')) {
+    function getLastDayOfMonth($date) {
+        return date('Y-m-t', strtotime($date));
+    }
+}

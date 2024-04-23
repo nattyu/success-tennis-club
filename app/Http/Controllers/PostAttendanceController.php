@@ -8,6 +8,7 @@ use App\Models\PostCourt;
 use App\Models\RegistNewCourt;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class PostAttendanceController extends Controller
 {
@@ -76,6 +77,7 @@ class PostAttendanceController extends Controller
     {
         try {
             // フォームから送信されたデータを取得
+            $elected_date = $request->input('elected_date');
             $attendFlgs = $request->input('attend_flg');
             $attendCourts = $request->input('attendances');
             $userId = $request->input('user_id');
@@ -106,6 +108,12 @@ class PostAttendanceController extends Controller
 
                 $postAttendance = PostAttendance::findOrFail($attendanceId[$count]);
 
+                // 関連するキャッシュのクリア
+                $firstDayOfMonth = getFirstDayOfMonth($elected_date[0]); // 月の初日を取得;
+                $lastDayOfMonth = getLastDayOfMonth($elected_date[0]); // 月の最終日を取得;
+                Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+                Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+
                 $postAttendance->update($validated);
             }
 
@@ -126,6 +134,10 @@ class PostAttendanceController extends Controller
             $d_u_attendance->delete();
         }
         $target_user->delete();
+
+        // 全てのキャッシュを削除
+        Cache::flush(); 
+
         return redirect()->route('post-court.index')->with('message', '削除しました');
     }
 }

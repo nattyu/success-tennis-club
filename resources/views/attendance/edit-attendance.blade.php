@@ -72,6 +72,7 @@
                             </select>
                         </td>
                     </tr>
+                    <input type="hidden" name="elected_date[]" value="{{ $e_court->elected_date }}">
                     <input type="hidden" name="user_id[]" value="{{ $filteredPostAttendance->user_id }}">
                     <input type="hidden" name="attendances[]" value="{{ $e_court->id }}">
                     <input type="hidden" name="attendance_id[]" value="{{ $filteredPostAttendance->id }}">
