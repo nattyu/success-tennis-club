@@ -113,6 +113,7 @@ class PostAttendanceController extends Controller
                 $lastDayOfMonth = getLastDayOfMonth($elected_date[0]); // 月の最終日を取得;
                 Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
                 Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+                Cache::forget('attendanceMatrix_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
 
                 $postAttendance->update($validated);
             }
