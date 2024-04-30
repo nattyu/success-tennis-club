@@ -58,8 +58,8 @@
                     </td>
                     @foreach ($postCourts as $p_court)
                         <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32 text-center dark:text-gray-100">
-                            〇:{{ $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '〇')->count() }},
-                            △:{{ $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '△')->count() }}
+                            〇:{{ $attendanceCounts[$p_court->id]['〇'] }},
+                            △:{{ $attendanceCounts[$p_court->id]['△'] }}
                         </td>
                     @endforeach
                 </tr>
@@ -87,11 +87,9 @@
                             </div>
                         </td>
                         @foreach ($postCourts as $p_court)
-                            @php
-                                $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->first();
-                                $attend_flg = $attend_array ? $attend_array->attend_flg : 'null';
-                            @endphp
-                            <td class="border-b border-gray-500 text-center p-1 sm:p-2 sm:w-32 dark:text-gray-100">{{ $attend_flg }}</td>
+                            <td class="border-b border-gray-500 text-center p-1 sm:p-2 sm:w-32 dark:text-gray-100">
+                                {{ $attendanceMatrix[$user->id][$p_court->id] }}
+                            </td>
                         @endforeach
                     </tr>
                 @endforeach

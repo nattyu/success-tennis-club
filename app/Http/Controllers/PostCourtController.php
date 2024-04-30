@@ -53,8 +53,24 @@ class PostCourtController extends Controller
                                 ->get();
         });
 
+        // 出席情報のマトリックスを構築
+        $attendanceMatrix = [];
+        foreach ($users as $user) {
+            foreach ($postCourts as $p_court) {
+                $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->first();
+                $attendanceMatrix[$user->id][$p_court->id] = $attend_array ? $attend_array->attend_flg : 'null';
+            }
+        }
+
+        // 集計データの準備
+        $attendanceCounts = [];
+        foreach ($postCourts as $p_court) {
+            $attendanceCounts[$p_court->id]['〇'] = $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '〇')->count();
+            $attendanceCounts[$p_court->id]['△'] = $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '△')->count();
+        }
+
         // ビューにデータを渡してレンダリング
-        return view('court.index-court', compact('postCourts', 'select', 'users', 'attendances'));
+        return view('court.index-court', compact('postCourts', 'select', 'users', 'attendanceMatrix', 'attendanceCounts'));
     }
 
     /**
