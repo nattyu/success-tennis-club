@@ -57,8 +57,12 @@ class PostCourtController extends Controller
                             ->get();
         });
 
-        // ユーザーデータを全て取得
+        // ユーザーデータを取得して、ログインユーザーを先頭にする
         $users = User::select('id', 'nickname')->get();
+        $authUserId = auth()->id(); // ログインユーザーのIDを取得
+        $users = $users->sortByDesc(function ($user) use ($authUserId) {
+            return $user->id === $authUserId;
+        });
 
         // attendancesデータをキャッシュから取得、またはクエリ実行してキャッシュに保存
         $attendances = Cache::remember($cacheKeyAttendances, 3600, function () use ($postCourts) {
