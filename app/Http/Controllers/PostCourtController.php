@@ -15,6 +15,24 @@ class PostCourtController extends Controller
     private $start_times = ['6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
     private $end_times = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
 
+    // キャッシュキーを生成
+    private function getCacheKey($prefix, $date) {
+        $firstDayOfMonth = getFirstDayOfMonth($date); // 月の初日を取得;
+        $lastDayOfMonth = getLastDayOfMonth($date); // 月の最終日を取得;
+        return $prefix . '_' . $firstDayOfMonth . '_' . $lastDayOfMonth;
+    }
+
+    // キャッシュのクリア
+    private function clearRelatedCaches($date) {
+        $postCourtsKey = $this->getCacheKey('postCourts', $date);
+        $attendancesKey = $this->getCacheKey('attendances', $date);
+        $attendanceMatrixKey = $this->getCacheKey('attendanceMatrix', $date);
+
+        Cache::forget($postCourtsKey);
+        Cache::forget($attendancesKey);
+        Cache::forget($attendanceMatrixKey);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -106,11 +124,7 @@ class PostCourtController extends Controller
         $postCourt = PostCourt::create($validated);
 
         // 関連するキャッシュのクリア
-        $firstDayOfMonth = getFirstDayOfMonth($validated['elected_date']); // 月の初日を取得;
-        $lastDayOfMonth = getLastDayOfMonth($validated['elected_date']); // 月の最終日を取得;
-        Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
-        Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
-        Cache::forget('attendanceMatrix_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        $this->clearRelatedCaches($validated['elected_date']);
 
         $users = User::all();
         $elected_court_id = $postCourt->id;
@@ -168,11 +182,7 @@ class PostCourtController extends Controller
         ]);
 
         // 関連するキャッシュのクリア
-        $firstDayOfMonth = getFirstDayOfMonth($validated['elected_date']); // 月の初日を取得;
-        $lastDayOfMonth = getLastDayOfMonth($validated['elected_date']); // 月の最終日を取得;
-        Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
-        Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
-        Cache::forget('attendanceMatrix_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        $this->clearRelatedCaches($validated['elected_date']);
 
         $postCourt->update($validated);
 
@@ -194,11 +204,7 @@ class PostCourtController extends Controller
         }
 
         // 関連するキャッシュのクリア
-        $firstDayOfMonth = getFirstDayOfMonth($elected_date); // 月の初日を取得;
-        $lastDayOfMonth = getLastDayOfMonth($elected_date); // 月の最終日を取得;
-        Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
-        Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
-        Cache::forget('attendanceMatrix_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        $this->clearRelatedCaches($elected_date);
 
         return redirect()->route('post-court.index')->with('message', '削除しました');
     }
