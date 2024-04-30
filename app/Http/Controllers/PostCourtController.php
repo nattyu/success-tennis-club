@@ -26,6 +26,8 @@ class PostCourtController extends Controller
 
         // キャッシュのキーを月の範囲に基づいて設定
         $cacheKeyPostCourts = 'postCourts_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
+        $cacheKeyAttendances = 'attendances_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
+        $cacheKeyAttendanceMatrix = 'attendanceMatrix_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
 
         // postCourtsデータをキャッシュから取得、またはクエリ実行してキャッシュに保存
         $postCourts = Cache::remember($cacheKeyPostCourts, 3600, function () use ($select_and_month_num) {
@@ -39,28 +41,26 @@ class PostCourtController extends Controller
 
         // ユーザーデータを全て取得
         $users = User::select('id', 'nickname')->get();
-        
-        // 抽出されたpostCourtsからIDを取得
-        $postCourtIds = $postCourts->pluck('id')->toArray();
-
-        // キャッシュキーを月の範囲に基づいて設定
-        $cacheKeyAttendances = 'attendances_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
 
         // attendancesデータをキャッシュから取得、またはクエリ実行してキャッシュに保存
-        $attendances = Cache::remember($cacheKeyAttendances, 3600, function () use ($postCourtIds) {
+        $attendances = Cache::remember($cacheKeyAttendances, 3600, function () use ($postCourts) {
+            $postCourtIds = $postCourts->pluck('id')->toArray();
             return PostAttendance::whereIn('elected_court_id', $postCourtIds)
                                 ->select('user_id', 'elected_court_id', 'attend_flg')
                                 ->get();
         });
 
-        // 出席情報のマトリックスを構築
-        $attendanceMatrix = [];
-        foreach ($users as $user) {
-            foreach ($postCourts as $p_court) {
-                $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->first();
-                $attendanceMatrix[$user->id][$p_court->id] = $attend_array ? $attend_array->attend_flg : 'null';
+        // 出席情報のマトリックスをキャッシュから取得、または構築してキャッシュに保存
+        $attendanceMatrix = Cache::remember($cacheKeyAttendanceMatrix, 3600, function () use ($users, $postCourts, $attendances) {
+            $matrix = [];
+            foreach ($users as $user) {
+                foreach ($postCourts as $p_court) {
+                    $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->first();
+                    $matrix[$user->id][$p_court->id] = $attend_array ? $attend_array->attend_flg : 'null';
+                }
             }
-        }
+            return $matrix;
+        });
 
         // 集計データの準備
         $attendanceCounts = [];
@@ -72,6 +72,7 @@ class PostCourtController extends Controller
         // ビューにデータを渡してレンダリング
         return view('court.index-court', compact('postCourts', 'select', 'users', 'attendanceMatrix', 'attendanceCounts'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -109,6 +110,7 @@ class PostCourtController extends Controller
         $lastDayOfMonth = getLastDayOfMonth($validated['elected_date']); // 月の最終日を取得;
         Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
         Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        Cache::forget('attendanceMatrix_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
 
         $users = User::all();
         $elected_court_id = $postCourt->id;
@@ -170,6 +172,7 @@ class PostCourtController extends Controller
         $lastDayOfMonth = getLastDayOfMonth($validated['elected_date']); // 月の最終日を取得;
         Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
         Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        Cache::forget('attendanceMatrix_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
 
         $postCourt->update($validated);
 
@@ -195,6 +198,7 @@ class PostCourtController extends Controller
         $lastDayOfMonth = getLastDayOfMonth($elected_date); // 月の最終日を取得;
         Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
         Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+        Cache::forget('attendanceMatrix_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
 
         return redirect()->route('post-court.index')->with('message', '削除しました');
     }
