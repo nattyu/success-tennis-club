@@ -88,6 +88,9 @@
                 <x-responsive-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
                     コート新規登録
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('photos.index')" :active="request()->routeIs('photos.index')">
+                    ギャラリー
+                </x-responsive-nav-link>
             @endif
         </div>
 
