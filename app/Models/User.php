@@ -8,6 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany photos()
+ */
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -49,5 +53,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function postCourts() {
         return $this->hasMany(PostCourt::class);
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(Photo::class);
     }
 }

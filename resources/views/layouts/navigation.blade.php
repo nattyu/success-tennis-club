@@ -22,6 +22,9 @@
                         <x-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
                             コート新規登録
                         </x-nav-link>
+                        <x-nav-link :href="route('photos.index')" :active="request()->routeIs('photos.index')">
+                            ギャラリー
+                        </x-nav-link>
                     @endif
                 </div>
             </div>

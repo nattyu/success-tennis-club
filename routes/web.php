@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegistNewCourtController;
 use App\Http\Controllers\PostAttendanceController;
+use App\Http\Controllers\PhotoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->only(['edit', 'update', 'destroy']);
     Route::get('regist/regist-new-court', [RegistNewCourtController::class, 'create'])->name('regist-new-court.create');
     Route::post('regist', [RegistNewCourtController::class, 'store'])->name('regist-new-court.store');
+
+    Route::resource('photos', PhotoController::class)
+        ->only(['index', 'store', 'destroy']);
 });
 
 require __DIR__.'/auth.php';
