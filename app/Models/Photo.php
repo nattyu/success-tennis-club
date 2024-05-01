@@ -17,6 +17,8 @@ class Photo extends Model
 
     public function getPhotoUrlAttribute()
     {
-        return \Storage::url('images/'. $this->filename);
+        // APP_URL の値を取得し、ファイル名に追加する
+        $appURL = env('APP_URL');
+        return url($appURL . '/storage/images/' . $this->filename);
     }
 }
