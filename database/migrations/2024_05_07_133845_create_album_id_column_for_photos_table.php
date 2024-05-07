@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('photos', function (Blueprint $table) {
             // album_id列を追加
-            $table->unsignedBigInteger('album_id')->after('user_id');
+            $table->unsignedBigInteger('album_id')->nullable()->after('user_id');
 
             // 新しい外部キー制約を追加
             $table->foreign('album_id')->references('id')->on('galleries')->onDelete('cascade');
