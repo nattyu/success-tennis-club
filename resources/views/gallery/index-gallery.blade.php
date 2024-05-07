@@ -2,7 +2,7 @@
     <form class="m-3 sm:flex items-center" action="{{ route('gallery.store') }}" method="post">
         @csrf
         <p class="mt-2 text-sm">アルバムを作成</p>
-        <input type="text" class="mt-2 sm:mx-2" name="album_name" multiple onchange="this.closest('form').submit()" placeholder="アルバム名を入力">
+        <input type="text" class="mt-2 sm:mx-2" name="album_name" multiple placeholder="アルバム名を入力">
         <x-primary-button type="submit" class="mt-2">作成</x-primary-button>
     </form>
     <ul class="m-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 md:gap-2 xl:gap-3">
