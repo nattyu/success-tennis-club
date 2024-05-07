@@ -14,11 +14,12 @@ class PhotoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($album_id)
     {
-        $photos = Photo::all();
+        $photos = Photo::where('album_id', $album_id)->get();
         $data = [
             'photos' => $photos,
+            'album_id' => $album_id,
         ];
         return view('photo.index-photo', $data);
     }
@@ -34,7 +35,7 @@ class PhotoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $album_id)
     {
         $this->validate($request, [
             'file.*' => 'required|file|image|mimetypes:image/jpeg,image/png',
@@ -50,6 +51,7 @@ class PhotoController extends Controller
             // 投稿内容をDBに保存
             auth()->user()->photos()->create([
                 'filename' => $filename,
+                'album_id' => $album_id,
             ]);
         }
 

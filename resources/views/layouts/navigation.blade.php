@@ -22,7 +22,7 @@
                         <x-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
                             コート新規登録
                         </x-nav-link>
-                        <x-nav-link :href="route('photos.index')" :active="request()->routeIs('photos.index')">
+                        <x-nav-link :href="route('gallery.index')" :active="request()->routeIs('gallery.index')">
                             ギャラリー
                         </x-nav-link>
                     @endif
@@ -88,7 +88,7 @@
                 <x-responsive-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
                     コート新規登録
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('photos.index')" :active="request()->routeIs('photos.index')">
+                <x-responsive-nav-link :href="route('gallery.index')" :active="request()->routeIs('gallery.index')">
                     ギャラリー
                 </x-responsive-nav-link>
             @endif

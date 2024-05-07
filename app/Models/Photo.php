@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Photo extends Model
 {
-    protected $fillable = ['filename'];
+    protected $fillable = ['filename', 'album_id'];
     protected $appends = ['photo_url'];
 
     public function user()
@@ -20,5 +20,10 @@ class Photo extends Model
         // APP_URL の値を取得し、ファイル名に追加する
         $appURL = env('APP_URL');
         return url($appURL . '/storage/images/' . $this->filename);
+    }
+
+    public function gallery()
+    {
+        return $this->belongsTo(Gallery::class);
     }
 }

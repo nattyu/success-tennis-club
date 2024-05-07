@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegistNewCourtController;
 use App\Http\Controllers\PostAttendanceController;
 use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\GalleryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,11 +35,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('post-court', PostCourtController::class);
     Route::resource('post-attendance', PostAttendanceController::class)
         ->only(['edit', 'update', 'destroy']);
+    
     Route::get('regist/regist-new-court', [RegistNewCourtController::class, 'create'])->name('regist-new-court.create');
     Route::post('regist', [RegistNewCourtController::class, 'store'])->name('regist-new-court.store');
 
-    Route::resource('photos', PhotoController::class)
-        ->only(['index', 'store', 'destroy']);
+    Route::get('photos/album/{album}', [PhotoController::class, 'index'])->name('photos.index');
+    Route::post('photos/album/{album}', [PhotoController::class, 'store'])->name('photos.store');
+    Route::delete('photos/{photo}', [PhotoController::class, 'destroy'])->name('photos.destroy');
+
+    Route::resource('gallery', GalleryController::class);
 });
 
 require __DIR__.'/auth.php';
