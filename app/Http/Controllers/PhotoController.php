@@ -38,7 +38,7 @@ class PhotoController extends Controller
     public function store(Request $request, $album_id)
     {
         $this->validate($request, [
-            'file.*' => 'required|file|image|mimetypes:image/jpeg,image/png',
+            'file.*' => 'required|file|image|mimetypes:image/jpeg,image/png,image/HEIC',
         ]);
 
         // 複数のファイルを処理
