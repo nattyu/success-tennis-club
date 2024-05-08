@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Maestroerror\HeicToJpg;
 use Illuminate\Support\Facades\Session;
 
 
@@ -44,19 +43,24 @@ class PhotoController extends Controller
                 'file.*' => 'required|file',
             ]);
 
-            foreach ($request->file('file') as $file) {                
+            foreach ($request->file('file') as $file) {
                 $ext = strtolower($file->getClientOriginalExtension());
                 $filename = time() . rand(1, 100);
 
                 if ($ext === 'heic') {
                     // HEICファイルをJPEGに変換
-                    $filename .= '.jpg';
-                    try {
-                        HeicToJpg::convert($file->getPathname())->saveAs(storage_path('app/public/images/' . $filename));
-                    } catch (\Exception $e) {
-                        \Log::error("Error converting HEIC to JPG: " . $e->getMessage());
+                    $newFilename = $filename . '.jpg';
+                    $inputPath = $file->getPathname();
+                    $outputPath = storage_path('app/public/images/' . $newFilename);
+
+                    // ImageMagickを使用してHEICをJPEGに変換
+                    $command = "convert {$inputPath} {$outputPath}";
+                    exec($command, $output, $returnVar);
+                    if ($returnVar !== 0) {
+                        \Log::error("ImageMagick conversion failed: " . implode("\n", $output));
                         continue;  // 変換エラーが発生したファイルはスキップ
                     }
+                    $filename = $newFilename;
                 } else {
                     // その他のファイルはそのまま保存
                     $filename .= "." . $ext;
@@ -72,16 +76,15 @@ class PhotoController extends Controller
 
             return back();
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // バリデーションエラーの詳細をログに記録
             \Log::error("Validation error: " . $e->getMessage());
             return back()->withErrors($e->errors());
         } catch (\Exception $e) {
-            // その他のエラー
             \Log::error("An error occurred: " . $e->getMessage());
             Session::flash('error', "An error occurred, please try again.");
             return back();
         }
     }
+
 
 
 
