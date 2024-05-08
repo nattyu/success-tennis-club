@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Maestroerror\HeicToJpg;
+use Illuminate\Support\Facades\Session;
 
 
 class PhotoController extends Controller
@@ -37,26 +39,51 @@ class PhotoController extends Controller
      */
     public function store(Request $request, $album_id)
     {
-        $this->validate($request, [
-            'file.*' => 'required|file|image|mimetypes:image/jpeg,image/png,image/HEIC',
-        ]);
-
-        // 複数のファイルを処理
-        foreach ($request->file('file') as $file) {
-            $ext = $file->getClientOriginalExtension();
-            // ファイル名の衝突を避けるためランダムな数値を追加
-            $filename = time() . rand(1, 100) . "." . $ext;
-            $file->storeAs('public/images', $filename);
-
-            // 投稿内容をDBに保存
-            auth()->user()->photos()->create([
-                'filename' => $filename,
-                'album_id' => $album_id,
+        try {
+            $this->validate($request, [
+                'file.*' => 'required|file',
             ]);
-        }
 
-        return back();
+            foreach ($request->file('file') as $file) {                
+                $ext = strtolower($file->getClientOriginalExtension());
+                $filename = time() . rand(1, 100);
+
+                if ($ext === 'heic') {
+                    // HEICファイルをJPEGに変換
+                    $filename .= '.jpg';
+                    try {
+                        HeicToJpg::convert($file->getPathname())->saveAs(storage_path('app/public/images/' . $filename));
+                    } catch (\Exception $e) {
+                        \Log::error("Error converting HEIC to JPG: " . $e->getMessage());
+                        continue;  // 変換エラーが発生したファイルはスキップ
+                    }
+                } else {
+                    // その他のファイルはそのまま保存
+                    $filename .= "." . $ext;
+                    $file->storeAs('public/images', $filename);
+                }
+
+                // 投稿内容をDBに保存
+                auth()->user()->photos()->create([
+                    'filename' => $filename,
+                    'album_id' => $album_id,
+                ]);
+            }
+
+            return back();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // バリデーションエラーの詳細をログに記録
+            \Log::error("Validation error: " . $e->getMessage());
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            // その他のエラー
+            \Log::error("An error occurred: " . $e->getMessage());
+            Session::flash('error', "An error occurred, please try again.");
+            return back();
+        }
     }
+
+
 
     /**
      * Display the specified resource.

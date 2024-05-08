@@ -1,4 +1,14 @@
 <x-app-layout>
+    <!-- バリデーションエラーメッセージを表示 -->
+    @if ($errors->any())
+        <div class="bg-red-500 text-white p-3 rounded m-3">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form class="m-3 flex items-center" action="{{ route('photos.store', $album_id) }}" method="post" enctype="multipart/form-data">
         @csrf
         <label class="py-2 px-4 rounded bg-gray-400 hover:bg-gray-500 text-white text-sm cursor-pointer">
