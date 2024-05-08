@@ -1,7 +1,4 @@
 <x-app-layout>
-    <?php
-    phpinfo();
-    ?>
     <!-- バリデーションエラーメッセージを表示 -->
     @if ($errors->any())
         <div class="bg-red-500 text-white p-3 rounded m-3">
