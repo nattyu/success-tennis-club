@@ -13,13 +13,13 @@
     <form class="m-3 flex items-center" action="{{ route('photos.store', $album_id) }}" method="post" enctype="multipart/form-data">
         @csrf
         <label class="py-2 px-4 rounded bg-gray-400 hover:bg-gray-500 text-white text-sm cursor-pointer">
-            写真をアップロード
+            写真/動画をアップロード
             <input type="file" name="file[]" class="hidden" multiple onchange="this.closest('form').submit()">
             <x-primary-button type="submit" class="hidden">アップロード</x-primary-button>
         </label>
     </form>
 
-    <p class="m-3">アルバム名：{{ $album_name }}</p>
+    <p class="m-3 dark:text-gray-100">アルバム名：{{ $album_name }}</p>
 
     <ul class="m-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 md:gap-2 xl:gap-3">
         @foreach ($photos as $photo)
