@@ -1,7 +1,7 @@
 <x-app-layout>
     <form class="m-3 sm:flex items-center" action="{{ route('gallery.store') }}" method="post">
         @csrf
-        <p class="mt-2 text-sm">アルバムを作成</p>
+        <p class="mt-2 text-sm dark:text-gray-100">アルバムを作成</p>
         <input type="text" class="mt-2 sm:mx-2" name="album_name" multiple placeholder="アルバム名を入力">
         <x-primary-button type="submit" class="mt-2">作成</x-primary-button>
     </form>
@@ -9,7 +9,7 @@
         @foreach ($albums as $album)
             <a href="{{ route('photos.index', $album->id) }}">
                 <li class="group h-32 sm:h-64 overflow-hidden rounded-lg shadow-lg relative">
-                    <div class="flex justify-between items-center bg-gray-100 h-[20%]">
+                    <div class="flex justify-items-center justify-between items-center bg-gray-100 h-[20%]">
                         <p class="px-2 md:px-3 py-1 mr-3 mb-3">{{ $album->album_name }}</p>
                         <form class="block" onsubmit="return confirm('本当に削除しますか？')" action="{{ route('gallery.destroy', $album) }}" method="post">
                             @csrf
