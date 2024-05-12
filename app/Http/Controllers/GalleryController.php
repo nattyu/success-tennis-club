@@ -15,9 +15,18 @@ class GalleryController extends Controller
     public function index()
     {
         $albums = Gallery::all();
+
+        // 各アルバムに対して1枚の写真を取得する
+        $albums->each(function ($album) {
+            $album->photo = Photo::where('album_id', $album->id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+        });
+
         $data = [
             'albums' => $albums,
         ];
+
         return view('gallery.index-gallery', $data);
     }
 

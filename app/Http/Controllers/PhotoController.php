@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gallery;
 use App\Models\Photo;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -18,9 +19,11 @@ class PhotoController extends Controller
     public function index($album_id)
     {
         $photos = Photo::where('album_id', $album_id)->get();
+        $album_name = Gallery::where('id', $album_id)->pluck('album_name')->first();
         $data = [
             'photos' => $photos,
             'album_id' => $album_id,
+            'album_name' => $album_name,
         ];
         return view('photo.index-photo', $data);
     }
@@ -61,8 +64,12 @@ class PhotoController extends Controller
                         continue;  // 変換エラーが発生したファイルはスキップ
                     }
                     $filename = $newFilename;
+                } elseif (in_array($ext, ['mp4', 'mov', 'avi', 'mkv'])) {
+                    // 動画ファイルをそのまま保存
+                    $filename .= "." . $ext;
+                    $file->storeAs('public/videos', $filename);
                 } else {
-                    // その他のファイルはそのまま保存
+                    // その他の画像ファイルをそのまま保存
                     $filename .= "." . $ext;
                     $file->storeAs('public/images', $filename);
                 }
@@ -84,9 +91,6 @@ class PhotoController extends Controller
             return back();
         }
     }
-
-
-
 
     /**
      * Display the specified resource.
@@ -117,8 +121,12 @@ class PhotoController extends Controller
      */
     public function destroy(Photo $photo)
     {
-        // 画像ファイルを削除
-        Storage::delete('public/images/'. $photo->filename);
+        // 画像または動画ファイルを削除
+        if (in_array(strtolower(pathinfo($photo->filename, PATHINFO_EXTENSION)), ['mp4', 'mov', 'avi', 'mkv'])) {
+            Storage::delete('public/videos/' . $photo->filename);
+        } else {
+            Storage::delete('public/images/' . $photo->filename);
+        }
         // DBからレコードを削除
         $photo->delete();
         return back();

@@ -9,6 +9,7 @@
             </ul>
         </div>
     @endif
+
     <form class="m-3 flex items-center" action="{{ route('photos.store', $album_id) }}" method="post" enctype="multipart/form-data">
         @csrf
         <label class="py-2 px-4 rounded bg-gray-400 hover:bg-gray-500 text-white text-sm cursor-pointer">
@@ -17,15 +18,25 @@
             <x-primary-button type="submit" class="hidden">アップロード</x-primary-button>
         </label>
     </form>
-    <p class="m-3">アルバム名：{{ $album_id }}</p>
+
+    <p class="m-3">アルバム名：{{ $album_name }}</p>
+
     <ul class="m-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 md:gap-2 xl:gap-3">
         @foreach ($photos as $photo)
             <li class="group h-32 sm:h-64 flex justify-end items-end bg-gray-100 overflow-hidden rounded-lg shadow-lg relative">
-                <img
-                    src="{{ $photo->photo_url }}"
-                    alt="Photo by {{ $photo->user->name }}"
-                    class="w-full h-full object-cover object-center absolute inset-0 group-hover:scale-105 transition duration-200"
-                />
+                @if (in_array(strtolower(pathinfo($photo->filename, PATHINFO_EXTENSION)), ['mp4', 'mov', 'avi', 'mkv']))
+                    <video
+                        src="{{ $photo->photo_url }}"
+                        class="w-full h-full object-cover object-center absolute inset-0 group-hover:scale-105 transition duration-200"
+                        controls
+                    ></video>
+                @else
+                    <img
+                        src="{{ $photo->photo_url }}"
+                        alt="Photo by {{ $photo->user->name }}"
+                        class="w-full h-full object-cover object-center absolute inset-0 group-hover:scale-105 transition duration-200"
+                    />
+                @endif
                 <form class="hidden group-hover:block" onsubmit="return confirm('本当に削除しますか？')" action="{{ route('photos.destroy', $photo) }}" method="post">
                     @csrf
                     @method('delete')
