@@ -57,12 +57,24 @@
 
     <div class="max-w-7xl mx-auto px-6">
         参加者予定者一覧
-        @foreach ($attendance_OK_member as $OK)
-            <p>{{ $OK->user->nickname }}</p>
-        @endforeach
-        @foreach ($attendance_Yet_member as $Yet)
-            <p>{{ $Yet->user->nickname }}</p>
-        @endforeach
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <div style="border: 1px solid #ccc; padding: 10px; text-align: center;">
+                参加者〇
+            </div>
+            <div style="border: 1px solid #ccc; padding: 10px; text-align: center;">
+                参加者△
+            </div>
+            <div style="border: 1px solid #ccc; padding: 10px; text-align: center;">
+                @foreach ($attendance_OK_member as $OK)
+                    <p>{{ $OK->user->nickname }}</p>
+                @endforeach
+            </div>
+            <div style="border: 1px solid #ccc; padding: 10px; text-align: center;">
+                @foreach ($attendance_Yet_member as $Yet)
+                    <p>{{ $Yet->user->nickname }}</p>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     <script>
