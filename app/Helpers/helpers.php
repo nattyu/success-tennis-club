@@ -76,9 +76,6 @@ if (!function_exists('calculateMonthRange')) {
         // デフォルトは今月の数字
         if ($select < 1 || $select > 12) {
             $select = date('n'); // 現在の月の数字を取得
-            if ($select < 3) {
-                $select = 3;
-            }
         }
     
         // 選択された月の始まりと終わりの日付を計算
@@ -101,3 +98,33 @@ if (!function_exists('getLastDayOfMonth')) {
         return date('Y-m-t', strtotime($date));
     }
 }
+
+if (!function_exists('generateYearMonthOptions')) {
+    function generateYearMonthOptions($select) {
+        $currentMonth = date('n'); // 現在の月を取得
+        $currentYear = date('Y');  // 現在の年を取得
+
+        $options = '';
+        for ($i = -3; $i <= 3; $i++) {
+            $month = $currentMonth + $i;
+            $year = $currentYear;
+
+            // 月が1未満または12を超えた場合の年と月の調整
+            if ($month < 1) {
+                $month += 12;
+                $year--;
+            } elseif ($month > 12) {
+                $month -= 12;
+                $year++;
+            }
+
+            // selected属性の設定
+            $selected = $select == $month ? 'selected' : '';
+
+            // optionタグの生成
+            $options .= '<option value="' . $month . '" ' . $selected . '>' . $year . '年' . $month . '月</option>';
+        }
+        return $options;
+    }
+}
+

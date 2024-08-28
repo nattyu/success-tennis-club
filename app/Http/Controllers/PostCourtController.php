@@ -152,7 +152,14 @@ class PostCourtController extends Controller
     public function show($id)
     {
         $postCourt = PostCourt::find($id);
-        return view('court.show-court', compact('postCourt'));
+        $users = User::all();
+        $attendance_OK_member = PostAttendance::where('elected_court_id', $id)->where('attend_flg', '〇')->get();
+        $attendance_Yet_member = PostAttendance::where('elected_court_id', $id)->where('attend_flg', '△')->get();
+        return view('court.show-court', compact('postCourt'))->with([
+            'users' => $users,
+            'attendance_OK_member' => $attendance_OK_member,
+            'attendance_Yet_member' => $attendance_Yet_member,
+        ]);
     }
 
     /**

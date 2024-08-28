@@ -53,7 +53,16 @@
                 </x-primary-button>
             </form>
         </div>
-        
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6">
+        参加者予定者一覧
+        @foreach ($attendance_OK_member as $OK)
+            <p>{{ $OK->user->nickname }}</p>
+        @endforeach
+        @foreach ($attendance_Yet_member as $Yet)
+            <p>{{ $Yet->user->nickname }}</p>
+        @endforeach
     </div>
 
     <script>

@@ -14,16 +14,7 @@
         <form id="year_month_select" class="m-2 sm:m-4">
             @csrf
             <select name="year_month" id="year_month" class="text-sm sm:text-base">
-                <option value="3" {{ $select == '3' ? 'selected': '' }}>2024年3月</option>
-                <option value="4" {{ $select == '4' ? 'selected': '' }}>2024年4月</option>
-                <option value="5" {{ $select == '5' ? 'selected': '' }}>2024年5月</option>
-                <option value="6" {{ $select == '6' ? 'selected': '' }}>2024年6月</option>
-                <option value="7" {{ $select == '7' ? 'selected': '' }}>2024年7月</option>
-                <option value="8" {{ $select == '8' ? 'selected': '' }}>2024年8月</option>
-                <option value="9" {{ $select == '9' ? 'selected': '' }}>2024年9月</option>
-                <option value="10" {{ $select == '10' ? 'selected': '' }}>2024年10月</option>
-                <option value="11" {{ $select == '11' ? 'selected': '' }}>2024年11月</option>
-                <option value="12" {{ $select == '12' ? 'selected': '' }}>2024年12月</option>
+                {!! generateYearMonthOptions($select) !!}
             </select>
         </form>
         <div class="whitespace-nowrap overflow-auto w-[95%] h-full">
