@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-7xl mx-auto px-6 dark:text-gray-100">
             <p class="py-4">参加者予定者一覧</p>
             <div class="grid grid-cols-2 gap-2">
                 <div class="border-l border-t border-r border-gray-500 p-2 text-center">
