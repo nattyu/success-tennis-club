@@ -5,74 +5,76 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto px-6">
-        @if (session('message'))
-            <div class="text-red-600 font-bold">
-                {{ session('message') }}
+    <div class="sm-flex">
+        <div class="max-w-7xl mx-auto px-6">
+            @if (session('message'))
+                <div class="text-red-600 font-bold">
+                    {{ session('message') }}
+                </div>
+            @endif
+            <table class="m-2 sm:m-4 dark:text-gray-100">
+                <tr>
+                    <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">作成者</td>
+                    <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">
+                        @if (isset($postCourt->user->nickname))
+                            {{ $postCourt->user->nickname }}
+                        @else
+                            unknown
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">日付</td>
+                    <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertyyyymmddTomd($postCourt->elected_date) }}</td>
+                </tr>
+                <tr>
+                    <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">時間</td>
+                    <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertHisToHi($postCourt->start_time) }}~{{ convertHisToHi($postCourt->end_time) }}</td>
+                </tr>
+                <tr>
+                    <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">コート</td>
+                    <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->court->court_name }}</td>
+                </tr>
+                <tr>
+                    <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">コート番号</td>
+                    <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->court_number }}</td>
+                </tr>
+            </table>
+            <div class="m-2 sm:m-4 flex">
+                <a href="{{ route('post-court.edit', $postCourt) }}">
+                    <x-primary-button class="mt-4">
+                        編集
+                    </x-primary-button>
+                </a>
+                <form id="delete-form-{{ $postCourt->id }}" action="{{ route('post-court.destroy', $postCourt) }}" method="POST" class="ml-4">
+                    @csrf
+                    {{ method_field('DELETE') }}
+                    <x-primary-button type="button" class="mt-4 bg-red-600" onclick="confirmDelete({{ $postCourt->id }})">
+                        削除
+                    </x-primary-button>
+                </form>
             </div>
-        @endif
-        <table class="m-2 sm:m-4 dark:text-gray-100">
-            <tr>
-                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">作成者</td>
-                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">
-                    @if (isset($postCourt->user->nickname))
-                        {{ $postCourt->user->nickname }}
-                    @else
-                        unknown
-                    @endif
-                </td>
-            </tr>
-            <tr>
-                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">日付</td>
-                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertyyyymmddTomd($postCourt->elected_date) }}</td>
-            </tr>
-            <tr>
-                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">時間</td>
-                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertHisToHi($postCourt->start_time) }}~{{ convertHisToHi($postCourt->end_time) }}</td>
-            </tr>
-            <tr>
-                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">コート</td>
-                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->court->court_name }}</td>
-            </tr>
-            <tr>
-                <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">コート番号</td>
-                <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $postCourt->court_number }}</td>
-            </tr>
-        </table>
-        <div class="m-2 sm:m-4 flex">
-            <a href="{{ route('post-court.edit', $postCourt) }}">
-                <x-primary-button class="mt-4">
-                    編集
-                </x-primary-button>
-            </a>
-            <form id="delete-form-{{ $postCourt->id }}" action="{{ route('post-court.destroy', $postCourt) }}" method="POST" class="ml-4">
-                @csrf
-                {{ method_field('DELETE') }}
-                <x-primary-button type="button" class="mt-4 bg-red-600" onclick="confirmDelete({{ $postCourt->id }})">
-                    削除
-                </x-primary-button>
-            </form>
         </div>
-    </div>
 
-    <div class="max-w-7xl mx-auto px-6">
-        参加者予定者一覧
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-            <div style="border: 1px solid #ccc; padding: 10px; text-align: center;">
-                参加者〇
-            </div>
-            <div style="border: 1px solid #ccc; padding: 10px; text-align: center;">
-                参加者△
-            </div>
-            <div style="border: 1px solid #ccc; padding: 10px; text-align: center;">
-                @foreach ($attendance_OK_member as $OK)
-                    <p>{{ $OK->user->nickname }}</p>
-                @endforeach
-            </div>
-            <div style="border: 1px solid #ccc; padding: 10px; text-align: center;">
-                @foreach ($attendance_Yet_member as $Yet)
-                    <p>{{ $Yet->user->nickname }}</p>
-                @endforeach
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="py-4">参加者予定者一覧</p>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="border-l border-t border-r border-gray-500 p-2 text-center">
+                    〇：{{ count($attendance_OK_member) }}人
+                </div>
+                <div class="border-t border-r border-gray-500 p-2 text-center">
+                    △：{{ count($attendance_Yet_member) }}人
+                </div>
+                <div class="border border-gray-500 p-2 text-center">
+                    @foreach ($attendance_OK_member as $OK)
+                        <p>{{ $OK->user->nickname }}</p>
+                    @endforeach
+                </div>
+                <div class="border-b border-t border-r border-gray-500 p-2 text-center">
+                    @foreach ($attendance_Yet_member as $Yet)
+                        <p>{{ $Yet->user->nickname }}</p>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
