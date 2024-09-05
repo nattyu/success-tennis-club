@@ -152,14 +152,42 @@ class PostCourtController extends Controller
     public function show($id)
     {
         $postCourt = PostCourt::find($id);
+        
+        // 前のレコードを取得
+        $previousCourt = PostCourt::where(function ($query) use ($postCourt) {
+            $query->where('elected_date', '<', $postCourt->elected_date)
+                ->orWhere(function ($query) use ($postCourt) {
+                    $query->where('elected_date', '=', $postCourt->elected_date)
+                            ->where('start_time', '<', $postCourt->start_time);
+                });
+        })
+        ->where('id', '!=', $postCourt->id)  // 現在のレコードを除外
+        ->orderBy('elected_date', 'desc')
+        ->orderBy('start_time', 'desc')
+        ->first();
+
+        // 次のレコードを取得
+        $nextCourt = PostCourt::where(function ($query) use ($postCourt) {
+            $query->where('elected_date', '>', $postCourt->elected_date)
+                ->orWhere(function ($query) use ($postCourt) {
+                    $query->where('elected_date', '=', $postCourt->elected_date)
+                            ->where('start_time', '>', $postCourt->start_time);
+                });
+        })
+        ->where('id', '!=', $postCourt->id)  // 現在のレコードを除外
+        ->orderBy('elected_date', 'asc')
+        ->orderBy('start_time', 'asc')
+        ->first();
+
         $users = User::all();
         $attendance_OK_member = PostAttendance::where('elected_court_id', $id)->where('attend_flg', '〇')->get();
         $attendance_Yet_member = PostAttendance::where('elected_court_id', $id)->where('attend_flg', '△')->get();
-        return view('court.show-court', compact('postCourt'))->with([
-            'users' => $users,
-            'attendance_OK_member' => $attendance_OK_member,
-            'attendance_Yet_member' => $attendance_Yet_member,
-        ]);
+        return view('court.show-court', compact('postCourt', 
+                                                'users',
+                                                'previousCourt',
+                                                'nextCourt', 
+                                                'attendance_OK_member', 
+                                                'attendance_Yet_member'));
     }
 
     /**
