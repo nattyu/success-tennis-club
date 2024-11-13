@@ -70,17 +70,27 @@ if (!function_exists('convertCourtNumber')) {
 
 if (!function_exists('calculateMonthRange')) {
     function calculateMonthRange($request) {
-        // セレクトボックスで選択した値
-        $select = intval($request->year_month);
+        // セレクトボックスで選択した値がnullでないか確認
+        if ($request->year_month) {
+            $year_month_list = explode('-', $request->year_month);
+            $select_year = intval($year_month_list[0]);
+            $select_month = intval($year_month_list[1]);
+            $select = $request->year_month;
+        } else {
+            // nullの場合は今日の年と月を取得
+            $select_year = intval(date('Y'));
+            $select_month = intval(date('n'));
+            $select = $select_year . '-' .  $select_month;
+        }
+
     
         // デフォルトは今月の数字
-        if ($select < 1 || $select > 12) {
-            $select = date('n'); // 現在の月の数字を取得
+        if ($select_month < 1 || $select_month > 12) {
+            $select_month = date('n'); // 現在の月の数字を取得
         }
     
         // 選択された月の始まりと終わりの日付を計算
-        $year = date('Y'); // 西暦の数字
-        $month_start = sprintf('%04d-%02d-01', $year, $select);
+        $month_start = sprintf('%04d-%02d-01', $select_year, $select_month);
         $month_end = date('Y-m-t', strtotime($month_start));
     
         return ['select' => (string) $select, 'month_start' => $month_start, 'month_end' => $month_end];
@@ -104,6 +114,9 @@ if (!function_exists('generateYearMonthOptions')) {
         $currentMonth = date('n'); // 現在の月を取得
         $currentYear = date('Y');  // 現在の年を取得
 
+        $select_list = explode('-', $select);
+        $select_month = intval($select_list[1]);
+
         $options = '';
         for ($i = -3; $i <= 3; $i++) {
             $month = $currentMonth + $i;
@@ -119,10 +132,10 @@ if (!function_exists('generateYearMonthOptions')) {
             }
 
             // selected属性の設定
-            $selected = $select == $month ? 'selected' : '';
+            $selected = $select_month == $month ? 'selected' : '';
 
             // optionタグの生成
-            $options .= '<option value="' . $month . '" ' . $selected . '>' . $year . '年' . $month . '月</option>';
+            $options .= '<option value="' . $year . '-' . $month . '" ' . $selected . '>' . $year . '年' . $month . '月</option>';
         }
         return $options;
     }
