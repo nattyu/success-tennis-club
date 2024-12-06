@@ -48,8 +48,6 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
-
         $elected_courts = PostCourt::all();
 
         foreach ($elected_courts as $e_court) {
@@ -59,6 +57,8 @@ class RegisteredUserController extends Controller
                 'attend_flg' => '-',
             ]);
         }
+
+        event(new Registered($user));
 
         Auth::login($user);
 
