@@ -65,7 +65,7 @@ class PostCourtController extends Controller
         });
 
         // attendancesデータをキャッシュから取得、またはクエリ実行してキャッシュに保存
-        $attendances = Cache::remember($cacheKeyAttendances, 3600, function () use ($postCourts) {
+        $attendances = Cache::remember($cacheKeyAttendances, 300, function () use ($postCourts) {
             $postCourtIds = $postCourts->pluck('id')->toArray();
             return PostAttendance::whereIn('elected_court_id', $postCourtIds)
                                 ->select('user_id', 'elected_court_id', 'attend_flg')
@@ -73,7 +73,7 @@ class PostCourtController extends Controller
         });
 
         // 出席情報のマトリックスをキャッシュから取得、または構築してキャッシュに保存
-        $attendanceMatrix = Cache::remember($cacheKeyAttendanceMatrix, 3600, function () use ($users, $postCourts, $attendances) {
+        $attendanceMatrix = Cache::remember($cacheKeyAttendanceMatrix, 300, function () use ($users, $postCourts, $attendances) {
             $matrix = [];
             foreach ($users as $user) {
                 foreach ($postCourts as $p_court) {
