@@ -10,6 +10,7 @@
     @endif
 
     <div class="mt-4 flex items-center justify-between">
+        @if (Route::has('verification.send'))
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
 
@@ -19,6 +20,7 @@
                 </x-primary-button>
             </div>
         </form>
+        @endif
 
         <form method="POST" action="{{ route('logout') }}">
             @csrf
