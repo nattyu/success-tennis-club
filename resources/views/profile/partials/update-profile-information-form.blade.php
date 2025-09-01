@@ -9,9 +9,11 @@
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
+    {{--<form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
-    </form>
+    </form>--}}
+
+    {{-- ★ 認証メール再送フォームと未認証メッセージを削除しました --}}
 
     <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
