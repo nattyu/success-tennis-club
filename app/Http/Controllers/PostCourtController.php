@@ -121,6 +121,7 @@ class PostCourtController extends Controller
             'start_time' => 'required',
             'end_time' => 'required',
             'elected_date' => 'required',
+            'memo' => 'nullable|string|max:1000',
         ]);
 
         $validated['user_id'] = auth()->id();
@@ -218,6 +219,7 @@ class PostCourtController extends Controller
             'start_time' => 'required',
             'end_time' => 'required',
             'elected_date' => 'required',
+            'memo' => 'nullable|string|max:1000',
         ]);
 
         // 関連するキャッシュのクリア

@@ -5,14 +5,14 @@
         </h2>
     </x-slot>
 
-    <div class="sm-flex">
-        <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col items-center">
+        <div class="w-full max-w-2xl px-6">
             @if (session('message'))
-                <div class="text-red-600 font-bold">
+                <div class="text-red-600 font-bold text-center">
                     {{ session('message') }}
                 </div>
             @endif
-            <div class="flex items-center">
+            <div class="flex items-center justify-center">
                 @if (isset($previousCourt))
                     <a href="{{ route('post-court.show', $previousCourt) }}" class="">
                         <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 32px; height: 32px; opacity: 1;" xml:space="preserve">
@@ -30,6 +30,8 @@
                             </g>
                         </svg>
                     </a>
+                @else
+                    <div style="width: 32px; height: 32px;"></div>
                 @endif
                 <table class="m-2 sm:m-4 dark:text-gray-100">
                     <tr>
@@ -76,9 +78,20 @@
                             </g>
                         </svg>
                     </a>
+                @else
+                    <div style="width: 32px; height: 32px;"></div>
                 @endif
             </div>
-            <div class="m-2 sm:m-4 flex">
+
+            {{-- 備考欄 --}}
+            <div class="m-2 sm:m-4 dark:text-gray-100">
+                <p class="font-semibold mb-1">備考（練習内容など）</p>
+                <div class="border border-gray-500 rounded p-3 min-h-[80px] whitespace-pre-wrap">
+                    {{ $postCourt->memo ?? '（なし）' }}
+                </div>
+            </div>
+
+            <div class="m-2 sm:m-4 flex justify-center">
                 <a href="{{ route('post-court.edit', $postCourt) }}">
                     <x-primary-button class="mt-4">
                         編集
@@ -94,8 +107,8 @@
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-6 dark:text-gray-100">
-            <p class="py-4">参加者予定者一覧</p>
+        <div class="w-full max-w-2xl px-6 dark:text-gray-100">
+            <p class="py-4 text-center">参加者予定者一覧</p>
             <div class="grid grid-cols-2 gap-2">
                 <div class="border-l border-t border-r border-gray-500 p-2 text-center">
                     〇：{{ count($attendance_OK_member) }}人
@@ -130,7 +143,6 @@
             if (confirm('本当に削除しますか？')) {
                 document.getElementById('delete-form-' + courtId).submit();
             } else {
-                // 今いるページにリダイレクトさせる
                 window.location.href = "{{ url()->current() }}";
                 confirm('削除しませんでした');
             }

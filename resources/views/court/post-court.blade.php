@@ -74,6 +74,13 @@
                 </div>
             </div>
 
+            <div class="">
+                <div class="w-full sm:w-[50%] flex flex-col">
+                    <label for="memo" class="font-semibold mt-4 dark:text-gray-100">備考（練習内容など）</label>
+                    <textarea name="memo" id="memo" rows="4" class="mt-1 w-full py-2 px-3 border border-gray-300 rounded-md" placeholder="練習内容や連絡事項など自由に入力してください">{{ old('memo') }}</textarea>
+                </div>
+            </div>
+
             <x-primary-button class="mt-4">
                 登録
             </x-primary-button>

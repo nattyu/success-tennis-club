@@ -17,7 +17,8 @@ class PostCourt extends Model
         'court_number',
         'start_time',
         'end_time',
-        'elected_date'
+        'elected_date',
+        'memo'
     ];
 
     protected $dates = [
