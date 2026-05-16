@@ -20,7 +20,7 @@
                     <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
                     <select type="text" class="form-control" name="user_id" required>
                         @foreach($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->nickname }}</option>
+                            <option value="{{ $user->id }}" @if (old('user_id', $postCourt->user_id) == $user->id) selected @endif>{{ $user->nickname }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -41,7 +41,7 @@
                     <select type="text" class="form-control" name="court_id" required>
                         <option disabled style='display:none;' @if (empty($postCourt->court_id)) selected @endif>選択してください</option>
                         @foreach($registed_courts as $r_court)
-                            <option value="{{ $r_court->id }}">{{ $r_court->court_name }}</option>
+                            <option value="{{ $r_court->id }}" @if (old('court_id', $postCourt->court_id) == $r_court->id) selected @endif>{{ $r_court->court_name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -62,7 +62,7 @@
                     <select type="text" class="form-control" name="start_time" required>
                         <option disabled style='display:none;' @if (empty($postCourt->start_time)) selected @endif>選択してください</option>
                         @foreach($start_times as $s_time)
-                            <option value="{{ $s_time }}">{{ $s_time }}</option>
+                            <option value="{{ $s_time }}" @if (old('start_time', $postCourt->start_time) == $s_time) selected @endif>{{ $s_time }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -75,7 +75,7 @@
                     <select type="text" class="form-control" name="end_time" required>
                         <option disabled style='display:none;' @if (empty($postCourt->end_time)) selected @endif>選択してください</option>
                         @foreach($end_times as $e_time)
-                            <option value="{{ $e_time }}">{{ $e_time }}</option>
+                            <option value="{{ $e_time }}" @if (old('end_time', $postCourt->end_time) == $e_time) selected @endif>{{ $e_time }}</option>
                         @endforeach
                     </select>
                 </div>
