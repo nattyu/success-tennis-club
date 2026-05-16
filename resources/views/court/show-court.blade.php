@@ -86,9 +86,7 @@
             {{-- 備考欄 --}}
             <div class="m-2 sm:m-4 dark:text-gray-100">
                 <p class="font-semibold mb-1">備考（練習内容など）</p>
-                <div class="border border-gray-500 rounded p-3 min-h-[80px] whitespace-pre-wrap">
-                    {{ $postCourt->memo ?? '（なし）' }}
-                </div>
+                <div class="border border-gray-500 rounded p-3 min-h-[80px] whitespace-pre-wrap">{{ $postCourt->memo ?? '（なし）' }}</div>
             </div>
 
             <div class="m-2 sm:m-4 flex justify-center">
