@@ -1,8 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-base sm:text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            日程編集フォーム
-        </h2>
+        <div class="flex items-center gap-4">
+            <h2 class="font-semibold text-base sm:text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                日程編集フォーム
+            </h2>
+            <a href="{{ route('post-court.index') }}" class="text-sm text-white bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded-md">
+                コート一覧
+            </a>
+        </div>
     </x-slot>
 
     <div class="max-w-7xl mx-auto px-6 text-sm sm:text-base">
@@ -22,12 +27,13 @@
                 {!! generateYearMonthOptions($select) !!}
             </select>
         </form>
+        @if ($postAttendance->isNotEmpty())
         <form method="post" action="{{ route('post-attendance.update', $postAttendance[0]) }}" class="m-2 sm:m-4">
             @csrf
             @method('patch')
             <div class="">
                 <div class="w-full flex flex-col">
-                    <label for="user_name" class="font-semibold mt-2 sm:mt-4 dark:text-gray-100">回答者 {{ auth()->user()->nickname }}</label>
+                    <label for="user_name" class="font-semibold mt-2 sm:mt-4 dark:text-gray-100">回答者 {{ $postAttendance[0]->user->nickname }}</label>
                 </div>
             </div>
             <table class="mt-2 sm:mt-4 dark:text-gray-100">
@@ -41,13 +47,15 @@
                 </tr>
                 @foreach ($elected_courts as $e_court)
                     @php
-                        $filteredAttendance;
+                        $filteredPostAttendance = null;
                         foreach ($postAttendance as $p_atte) {
                             if ($p_atte['elected_court_id'] === $e_court->id) {
                                 $filteredPostAttendance = $p_atte;
+                                break;
                             }
                         }
                     @endphp
+                    @if ($filteredPostAttendance)
                     <tr>
                         <td class="border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32">{{ convertyyyymmddTomd($e_court->elected_date) }}</td>
                         <td class="border-t border-b border-l border-gray-500 p-1 sm:p-2 sm:w-32">{{ $e_court->user->nickname }}</td>
@@ -67,6 +75,7 @@
                     <input type="hidden" name="user_id[]" value="{{ $filteredPostAttendance->user_id }}">
                     <input type="hidden" name="attendances[]" value="{{ $e_court->id }}">
                     <input type="hidden" name="attendance_id[]" value="{{ $filteredPostAttendance->id }}">
+                    @endif
                 @endforeach
             </table>
 
@@ -74,6 +83,9 @@
                 更新
             </x-primary-button>
         </form>
+        @else
+            <p class="m-2 sm:m-4 dark:text-gray-100">この月の出欠データがありません。</p>
+        @endif
     </div>
 
     <script>

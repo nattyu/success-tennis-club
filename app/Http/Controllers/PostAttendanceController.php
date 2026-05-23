@@ -60,7 +60,9 @@ class PostAttendanceController extends Controller
                             ->orderBy('start_time', 'asc')
                             ->get();
 
-        $postAttendance = PostAttendance::where('user_id', $user_id)->get();
+        $postAttendance = PostAttendance::where('user_id', $user_id)
+                            ->whereIn('elected_court_id', $elected_courts->pluck('id'))
+                            ->get();
         $registed_courts = RegistNewCourt::all();
         return view('attendance.edit-attendance')->with([
             'select' => $select,
