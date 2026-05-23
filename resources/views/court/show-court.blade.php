@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
+        <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 コート詳細
             </h2>
             <a href="{{ route('post-court.index') }}" class="text-sm text-white bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded-md">
-                コート一覧
+                コート一覧へ戻る
             </a>
         </div>
     </x-slot>
@@ -95,7 +95,7 @@
             </div>
 
             <div class="m-2 sm:m-4 flex justify-center">
-                <a href="{{ route('post-court.edit', $postCourt) }}">
+                <a href="{{ route('post-court.edit', ['post_court' => $postCourt, 'year_month' => $year_month]) }}">
                     <x-primary-button class="mt-4">
                         編集
                     </x-primary-button>

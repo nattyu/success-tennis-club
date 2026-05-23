@@ -150,8 +150,9 @@ class PostCourtController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $year_month = $request->query('year_month');
         $postCourt = PostCourt::find($id);
         
         // 前のレコードを取得
@@ -183,23 +184,25 @@ class PostCourtController extends Controller
         $users = User::all();
         $attendance_OK_member = PostAttendance::where('elected_court_id', $id)->where('attend_flg', '〇')->get();
         $attendance_Yet_member = PostAttendance::where('elected_court_id', $id)->where('attend_flg', '△')->get();
-        return view('court.show-court', compact('postCourt', 
+        return view('court.show-court', compact('postCourt',
                                                 'users',
                                                 'previousCourt',
-                                                'nextCourt', 
-                                                'attendance_OK_member', 
-                                                'attendance_Yet_member'));
+                                                'nextCourt',
+                                                'attendance_OK_member',
+                                                'attendance_Yet_member',
+                                                'year_month'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PostCourt $postCourt)
+    public function edit(Request $request, PostCourt $postCourt)
     {
+        $year_month = $request->query('year_month');
         $registed_courts = RegistNewCourt::all();
         $users = User::all();
 
-        return view('court.edit-court', compact('postCourt'))->with([
+        return view('court.edit-court', compact('postCourt', 'year_month'))->with([
             'users' => $users,
             'registed_courts' => $registed_courts,
             'start_times' => $this->start_times,
@@ -227,7 +230,8 @@ class PostCourtController extends Controller
 
         $postCourt->update($validated);
 
-        return redirect()->route('post-court.index')->with('message', '更新しました');
+        $year_month = $request->input('year_month');
+        return redirect()->route('post-court.index', $year_month ? ['year_month' => $year_month] : [])->with('message', '更新しました');
     }
 
     /**

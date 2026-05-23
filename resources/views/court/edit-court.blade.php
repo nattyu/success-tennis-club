@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
+        <div class="flex items-center justify-between">
             <h2 class="font-semibold text-base sm:text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 当選コート編集フォーム
             </h2>
             <a href="{{ route('post-court.index') }}" class="text-sm text-white bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded-md">
-                コート一覧
+                コート一覧へ戻る
             </a>
         </div>
     </x-slot>
@@ -19,6 +19,7 @@
         <form method="post" action="{{ route('post-court.update', $postCourt) }}">
             @csrf
             @method('patch')
+            <input type="hidden" name="year_month" value="{{ $year_month ?? '' }}">
             <div class="">
                 <div class="w-full sm:w-[50%] flex flex-col">
                     <label for="user_id" class="font-semibold mt-4 dark:text-gray-100">当選者</label>

@@ -29,7 +29,7 @@
                     </th>
                     @foreach ($postCourts as $p_court)
                         <th class="sticky top-0 z-0 border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32 bg-gray-300">
-                            <a href="{{ route('post-court.show', $p_court) }}" class="text-blue-600">
+                            <a href="{{ route('post-court.show', ['post_court' => $p_court, 'year_month' => $select]) }}" class="text-blue-600">
                                 {{ convertyyyymmddTomd($p_court->elected_date) }} ({{ getDayOfWeek($p_court->elected_date)}})<br>
                                 {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
                                 {{ convertCourtName($p_court->court->court_name) }}<br>
@@ -60,7 +60,7 @@
                             <div class="flex flex-wrap items-center">
                                 <p class="mx-1">{{ $user->nickname }}</p>
                                 @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
-                                    <a href="{{ route('post-attendance.edit', $user->id) }}" class="mx-1">
+                                    <a href="{{ route('post-attendance.edit', ['post_attendance' => $user->id, 'year_month' => $select]) }}" class="mx-1">
                                         <button class="items-center justify-center">
                                             <i class="fa-solid fa-pencil"></i>
                                         </button>

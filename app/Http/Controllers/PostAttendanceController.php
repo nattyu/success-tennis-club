@@ -120,7 +120,8 @@ class PostAttendanceController extends Controller
                 $postAttendance->update($validated);
             }
 
-            return redirect()->route('post-court.index')->with('message', '更新しました');
+            $year_month = date('Y-n', strtotime($elected_date[0]));
+            return redirect()->route('post-court.index', ['year_month' => $year_month])->with('message', '更新しました');
         } catch (\Exception $errors) {
             return back()->with('error', 'エラーが発生しました: ' . $errors->getMessage());
         }
