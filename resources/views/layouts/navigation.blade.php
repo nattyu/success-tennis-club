@@ -22,6 +22,9 @@
                         <x-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
                             コート新規登録
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            ユーザー管理
+                        </x-nav-link>
                     @endif
                     <x-nav-link :href="route('gallery.index')" :active="request()->routeIs('gallery.index')">
                         ギャラリー
@@ -87,6 +90,9 @@
             @if (auth()->user()->role == 'admin')
                 <x-responsive-nav-link :href="route('regist-new-court.create')" :active="request()->routeIs('regist-new-court.create')">
                     コート新規登録
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    ユーザー管理
                 </x-responsive-nav-link>
             @endif
             <x-responsive-nav-link :href="route('gallery.index')" :active="request()->routeIs('gallery.index')">

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\PostAttendance;
 
 /**
  * @method \Illuminate\Database\Eloquent\Relations\HasMany photos()
@@ -50,6 +51,16 @@ class User extends Authenticatable //implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function isApproved(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    public function postAttendances()
+    {
+        return $this->hasMany(PostAttendance::class);
+    }
 
     public function postCourts() {
         return $this->hasMany(PostCourt::class);
