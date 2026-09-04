@@ -15,6 +15,9 @@
                     <x-nav-link :href="route('post-court.index')" :active="request()->routeIs('post-court.index')">
                         コート一覧
                     </x-nav-link>
+                    <x-nav-link :href="route('post-court.cards')" :active="request()->routeIs('post-court.cards')">
+                        コート一覧（カード）
+                    </x-nav-link>
                     <x-nav-link :href="route('post-court.create')" :active="request()->routeIs('post-court.create')">
                         コート日程作成
                     </x-nav-link>
@@ -83,6 +86,9 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('post-court.index')" :active="request()->routeIs('post-court.index')">
                 コート一覧
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('post-court.cards')" :active="request()->routeIs('post-court.cards')">
+                コート一覧（カード）
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('post-court.create')" :active="request()->routeIs('post-court.create')">
                 コート日程作成

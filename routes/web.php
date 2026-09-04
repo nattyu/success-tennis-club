@@ -35,9 +35,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'approved'])->group(function () {
+    Route::get('post-court/cards', [PostCourtController::class, 'cards'])->name('post-court.cards');
     Route::resource('post-court', PostCourtController::class);
     Route::resource('post-attendance', PostAttendanceController::class)
-        ->only(['edit', 'update', 'destroy']);
+        ->only(['edit', 'update']);
 
     Route::get('regist/regist-new-court', [RegistNewCourtController::class, 'create'])->name('regist-new-court.create');
     Route::post('regist', [RegistNewCourtController::class, 'store'])->name('regist-new-court.store');
@@ -51,6 +52,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::patch('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+        Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 });

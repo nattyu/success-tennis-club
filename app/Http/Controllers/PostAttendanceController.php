@@ -6,9 +6,7 @@ use App\Models\PostAttendance;
 use Illuminate\Http\Request;
 use App\Models\PostCourt;
 use App\Models\RegistNewCourt;
-use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Cache;
 
 class PostAttendanceController extends Controller
 {
@@ -52,6 +50,7 @@ class PostAttendanceController extends Controller
     {
         $select_and_month_num = calculateMonthRange($request);
         $select = $select_and_month_num['select'];
+        $month_num = $select_and_month_num['month_num'];
 
         // 選択された月の範囲でクエリ
         $elected_courts = PostCourt::where('elected_date', '>=', $select_and_month_num['month_start'])
@@ -66,6 +65,7 @@ class PostAttendanceController extends Controller
         $registed_courts = RegistNewCourt::all();
         return view('attendance.edit-attendance')->with([
             'select' => $select,
+            'month_num' => $month_num,
             'postAttendance' => $postAttendance,
             'elected_courts' => $elected_courts,
             'registed_courts' => $registed_courts,
@@ -110,38 +110,21 @@ class PostAttendanceController extends Controller
 
                 $postAttendance = PostAttendance::findOrFail($attendanceId[$count]);
 
-                // 関連するキャッシュのクリア
-                $firstDayOfMonth = getFirstDayOfMonth($elected_date[0]); // 月の初日を取得;
-                $lastDayOfMonth = getLastDayOfMonth($elected_date[0]); // 月の最終日を取得;
-                Cache::forget('postCourts_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
-                Cache::forget('attendances_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
-                Cache::forget('attendanceMatrix_' . $firstDayOfMonth . '_' . $lastDayOfMonth);
+                // 関連するキャッシュのクリア（1〜3ヶ月表示の全範囲分）
+                clearCourtCaches($elected_date[$count]);
 
                 $postAttendance->update($validated);
             }
 
             $year_month = date('Y-n', strtotime($elected_date[0]));
-            return redirect()->route('post-court.index', ['year_month' => $year_month])->with('message', '更新しました');
+            $query = ['year_month' => $year_month];
+            if ($request->input('month_num')) {
+                $query['month_num'] = $request->input('month_num');
+            }
+            return redirect()->route('post-court.index', $query)->with('message', '更新しました');
         } catch (\Exception $errors) {
             return back()->with('error', 'エラーが発生しました: ' . $errors->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        $delete_user_attendance = PostAttendance::where('user_id', $id)->get();
-        $target_user = User::find($id);
-        foreach ($delete_user_attendance as $d_u_attendance) {
-            $d_u_attendance->delete();
-        }
-        $target_user->delete();
-
-        // 全てのキャッシュを削除
-        Cache::flush(); 
-
-        return redirect()->route('post-court.index')->with('message', '削除しました');
-    }
 }

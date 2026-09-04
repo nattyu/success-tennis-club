@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-base sm:text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 日程編集フォーム
             </h2>
-            <a href="{{ route('post-court.index') }}" class="text-sm text-white bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded-md">
+            <a href="{{ route('post-court.index', ['year_month' => $select, 'month_num' => $month_num]) }}" class="text-sm text-white bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded-md">
                 コート一覧へ戻る
             </a>
         </div>
@@ -21,16 +21,20 @@
                 {{ session('error') }}
             </div>
         @endif
-        <form id="year_month_select" class="m-2 sm:m-4">
+        <form id="year_month_select" class="m-2 sm:m-4 flex flex-wrap items-center gap-2">
             @csrf
             <select name="year_month" id="year_month" class="text-sm sm:text-base">
                 {!! generateYearMonthOptions($select) !!}
+            </select>
+            <select name="month_num" id="month_num" class="text-sm sm:text-base">
+                {!! generateMonthNumOptions($month_num) !!}
             </select>
         </form>
         @if ($postAttendance->isNotEmpty())
         <form method="post" action="{{ route('post-attendance.update', $postAttendance[0]) }}" class="m-2 sm:m-4">
             @csrf
             @method('patch')
+            <input type="hidden" name="month_num" value="{{ $month_num }}">
             <div class="">
                 <div class="w-full flex flex-col">
                     <label for="user_name" class="font-semibold mt-2 sm:mt-4 dark:text-gray-100">回答者 {{ $postAttendance[0]->user->nickname }}</label>
@@ -90,12 +94,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const year_month_Input = document.getElementById('year_month');
-            if (year_month_Input) {
-                year_month_Input.addEventListener('change', function() {
-                    document.getElementById('year_month_select').submit();
-                });
-            }
+            ['year_month', 'month_num'].forEach(function(id) {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('change', function() {
+                        document.getElementById('year_month_select').submit();
+                    });
+                }
+            });
         });
     </script>
 </x-app-layout>

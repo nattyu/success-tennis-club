@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 コート詳細
             </h2>
-            <a href="{{ route('post-court.index') }}" class="text-sm text-white bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded-md">
+            <a href="{{ route('post-court.index', array_filter(['year_month' => $year_month, 'month_num' => $month_num])) }}" class="text-sm text-white bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded-md">
                 コート一覧へ戻る
             </a>
         </div>
@@ -19,7 +19,7 @@
             @endif
             <div class="flex items-center justify-center">
                 @if (isset($previousCourt))
-                    <a href="{{ route('post-court.show', $previousCourt) }}" class="">
+                    <a href="{{ route('post-court.show', ['post_court' => $previousCourt, 'year_month' => $year_month, 'month_num' => $month_num]) }}" class="">
                         <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 32px; height: 32px; opacity: 1;" xml:space="preserve">
                             <style type="text/css">
                                 .st0{fill:#4B4B4B;}
@@ -67,7 +67,7 @@
                     </tr>
                 </table>
                 @if (isset($nextCourt))
-                    <a href="{{ route('post-court.show', $nextCourt) }}" class="my-auto">
+                    <a href="{{ route('post-court.show', ['post_court' => $nextCourt, 'year_month' => $year_month, 'month_num' => $month_num]) }}" class="my-auto">
                         <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 32px; height: 32px; opacity: 1;" xml:space="preserve">
                             <style type="text/css">
                                 .st0{fill:#4B4B4B;}
@@ -95,7 +95,7 @@
             </div>
 
             <div class="m-2 sm:m-4 flex justify-center">
-                <a href="{{ route('post-court.edit', ['post_court' => $postCourt, 'year_month' => $year_month]) }}">
+                <a href="{{ route('post-court.edit', ['post_court' => $postCourt, 'year_month' => $year_month, 'month_num' => $month_num]) }}">
                     <x-primary-button class="mt-4">
                         編集
                     </x-primary-button>

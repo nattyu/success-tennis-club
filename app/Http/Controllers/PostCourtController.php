@@ -15,37 +15,25 @@ class PostCourtController extends Controller
     private $start_times = ['6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
     private $end_times = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
 
-    // キャッシュキーを生成
-    private function getCacheKey($prefix, $date) {
-        $firstDayOfMonth = getFirstDayOfMonth($date); // 月の初日を取得;
-        $lastDayOfMonth = getLastDayOfMonth($date); // 月の最終日を取得;
-        return $prefix . '_' . $firstDayOfMonth . '_' . $lastDayOfMonth;
-    }
+    // 一覧のデフォルト表示月数
+    private const DEFAULT_MONTH_NUM = 2;
 
-    // キャッシュのクリア
+    // キャッシュのクリア（1〜3ヶ月表示の全範囲分）
     private function clearRelatedCaches($date) {
-        $postCourtsKey = $this->getCacheKey('postCourts', $date);
-        $attendancesKey = $this->getCacheKey('attendances', $date);
-        $attendanceMatrixKey = $this->getCacheKey('attendanceMatrix', $date);
-
-        Cache::forget($postCourtsKey);
-        Cache::forget($attendancesKey);
-        Cache::forget($attendanceMatrixKey);
+        clearCourtCaches($date);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+    // 選択された年月範囲のpostCourts・出欠集計をキャッシュ込みで取得
+    private function fetchCourtsAndCounts(Request $request): array
     {
-        // リクエストから選択された年月の範囲を計算
-        $select_and_month_num = calculateMonthRange($request);
+        // リクエストから選択された年月の範囲を計算（デフォルトは2ヶ月分）
+        $select_and_month_num = calculateMonthRange($request, self::DEFAULT_MONTH_NUM);
         $select = $select_and_month_num['select'];
+        $month_num = $select_and_month_num['month_num'];
 
         // キャッシュのキーを月の範囲に基づいて設定
         $cacheKeyPostCourts = 'postCourts_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
         $cacheKeyAttendances = 'attendances_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
-        $cacheKeyAttendanceMatrix = 'attendanceMatrix_' . $select_and_month_num['month_start'] . '_' . $select_and_month_num['month_end'];
 
         // postCourtsデータをキャッシュから取得、またはクエリ実行してキャッシュに保存
         $postCourts = Cache::remember($cacheKeyPostCourts, 3600, function () use ($select_and_month_num) {
@@ -57,13 +45,6 @@ class PostCourtController extends Controller
                             ->get();
         });
 
-        // ユーザーデータを取得して、ログインユーザーを先頭にする
-        $users = User::select('id', 'nickname')->get();
-        $authUserId = auth()->id(); // ログインユーザーのIDを取得
-        $users = $users->sortByDesc(function ($user) use ($authUserId) {
-            return $user->id === $authUserId;
-        });
-
         // attendancesデータをキャッシュから取得、またはクエリ実行してキャッシュに保存
         $attendances = Cache::remember($cacheKeyAttendances, 300, function () use ($postCourts) {
             $postCourtIds = $postCourts->pluck('id')->toArray();
@@ -72,7 +53,42 @@ class PostCourtController extends Controller
                                 ->get();
         });
 
+        // 集計データの準備
+        $attendanceCounts = [];
+        foreach ($postCourts as $p_court) {
+            $attendanceCounts[$p_court->id]['〇'] = $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '〇')->count();
+            $attendanceCounts[$p_court->id]['△'] = $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '△')->count();
+        }
+
+        return [
+            'select' => $select,
+            'month_num' => $month_num,
+            'month_start' => $select_and_month_num['month_start'],
+            'month_end' => $select_and_month_num['month_end'],
+            'postCourts' => $postCourts,
+            'attendances' => $attendances,
+            'attendanceCounts' => $attendanceCounts,
+        ];
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $data = $this->fetchCourtsAndCounts($request);
+        $postCourts = $data['postCourts'];
+        $attendances = $data['attendances'];
+
+        // ユーザーデータを取得して、ログインユーザーを先頭にする
+        $users = User::select('id', 'nickname')->get();
+        $authUserId = auth()->id(); // ログインユーザーのIDを取得
+        $users = $users->sortByDesc(function ($user) use ($authUserId) {
+            return $user->id === $authUserId;
+        });
+
         // 出席情報のマトリックスをキャッシュから取得、または構築してキャッシュに保存
+        $cacheKeyAttendanceMatrix = 'attendanceMatrix_' . $data['month_start'] . '_' . $data['month_end'];
         $attendanceMatrix = Cache::remember($cacheKeyAttendanceMatrix, 300, function () use ($users, $postCourts, $attendances) {
             $matrix = [];
             foreach ($users as $user) {
@@ -84,15 +100,30 @@ class PostCourtController extends Controller
             return $matrix;
         });
 
-        // 集計データの準備
-        $attendanceCounts = [];
-        foreach ($postCourts as $p_court) {
-            $attendanceCounts[$p_court->id]['〇'] = $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '〇')->count();
-            $attendanceCounts[$p_court->id]['△'] = $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '△')->count();
-        }
-
         // ビューにデータを渡してレンダリング
-        return view('court.index-court', compact('postCourts', 'select', 'users', 'attendanceMatrix', 'attendanceCounts'));
+        return view('court.index-court', [
+            'postCourts' => $postCourts,
+            'select' => $data['select'],
+            'month_num' => $data['month_num'],
+            'users' => $users,
+            'attendanceMatrix' => $attendanceMatrix,
+            'attendanceCounts' => $data['attendanceCounts'],
+        ]);
+    }
+
+    /**
+     * Display the schedules as a mobile-friendly card list.
+     */
+    public function cards(Request $request)
+    {
+        $data = $this->fetchCourtsAndCounts($request);
+
+        return view('court.cards-court', [
+            'postCourts' => $data['postCourts'],
+            'select' => $data['select'],
+            'month_num' => $data['month_num'],
+            'attendanceCounts' => $data['attendanceCounts'],
+        ]);
     }
 
 
@@ -153,6 +184,7 @@ class PostCourtController extends Controller
     public function show(Request $request, $id)
     {
         $year_month = $request->query('year_month');
+        $month_num = $request->query('month_num');
         $postCourt = PostCourt::find($id);
         
         // 前のレコードを取得
@@ -190,7 +222,8 @@ class PostCourtController extends Controller
                                                 'nextCourt',
                                                 'attendance_OK_member',
                                                 'attendance_Yet_member',
-                                                'year_month'));
+                                                'year_month',
+                                                'month_num'));
     }
 
     /**
@@ -199,10 +232,11 @@ class PostCourtController extends Controller
     public function edit(Request $request, PostCourt $postCourt)
     {
         $year_month = $request->query('year_month');
+        $month_num = $request->query('month_num');
         $registed_courts = RegistNewCourt::all();
         $users = User::all();
 
-        return view('court.edit-court', compact('postCourt', 'year_month'))->with([
+        return view('court.edit-court', compact('postCourt', 'year_month', 'month_num'))->with([
             'users' => $users,
             'registed_courts' => $registed_courts,
             'start_times' => $this->start_times,
@@ -225,13 +259,20 @@ class PostCourtController extends Controller
             'memo' => 'nullable|string|max:1000',
         ]);
 
-        // 関連するキャッシュのクリア
+        // 関連するキャッシュのクリア（日付変更時は変更前の月の分も）
+        $this->clearRelatedCaches($postCourt->elected_date);
         $this->clearRelatedCaches($validated['elected_date']);
 
         $postCourt->update($validated);
 
-        $year_month = $request->input('year_month');
-        return redirect()->route('post-court.index', $year_month ? ['year_month' => $year_month] : [])->with('message', '更新しました');
+        $query = [];
+        if ($request->input('year_month')) {
+            $query['year_month'] = $request->input('year_month');
+        }
+        if ($request->input('month_num')) {
+            $query['month_num'] = $request->input('month_num');
+        }
+        return redirect()->route('post-court.index', $query)->with('message', '更新しました');
     }
 
     /**

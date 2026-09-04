@@ -11,10 +11,13 @@
                 {{ session('message') }}
             </div>
         @endif
-        <form id="year_month_select" class="m-2 sm:m-4">
+        <form id="year_month_select" class="m-2 sm:m-4 flex flex-wrap items-center gap-2">
             @csrf
             <select name="year_month" id="year_month" class="text-sm sm:text-base">
                 {!! generateYearMonthOptions($select) !!}
+            </select>
+            <select name="month_num" id="month_num" class="text-sm sm:text-base">
+                {!! generateMonthNumOptions($month_num) !!}
             </select>
         </form>
         <div class="whitespace-nowrap overflow-auto w-[95%] h-full">
@@ -29,7 +32,7 @@
                     </th>
                     @foreach ($postCourts as $p_court)
                         <th class="sticky top-0 z-0 border-t border-b border-gray-500 p-1 sm:p-2 sm:w-32 bg-gray-300">
-                            <a href="{{ route('post-court.show', ['post_court' => $p_court, 'year_month' => $select]) }}" class="text-blue-600">
+                            <a href="{{ route('post-court.show', ['post_court' => $p_court, 'year_month' => $select, 'month_num' => $month_num]) }}" class="text-blue-600">
                                 {{ convertyyyymmddTomd($p_court->elected_date) }} ({{ getDayOfWeek($p_court->elected_date)}})<br>
                                 {{ convertHisToHi($p_court->start_time) }}~{{ convertHisToHi($p_court->end_time) }}<br>
                                 {{ convertCourtName($p_court->court->court_name) }}<br>
@@ -60,20 +63,11 @@
                             <div class="flex flex-wrap items-center">
                                 <p class="mx-1">{{ $user->nickname }}</p>
                                 @if ($user->id === auth()->user()->id || auth()->user()->role == 'admin')
-                                    <a href="{{ route('post-attendance.edit', ['post_attendance' => $user->id, 'year_month' => $select]) }}" class="mx-1">
+                                    <a href="{{ route('post-attendance.edit', ['post_attendance' => $user->id, 'year_month' => $select, 'month_num' => $month_num]) }}" class="mx-1">
                                         <button class="items-center justify-center">
                                             <i class="fa-solid fa-pencil"></i>
                                         </button>
                                     </a>
-                                @endif
-                                @if (auth()->user()->role == 'admin')
-                                    <form id="delete-form-{{ $user->id }}" action="{{ route('post-attendance.destroy', $user->id) }}" method="POST" class="mx-1">
-                                        @csrf
-                                        {{ method_field('DELETE') }}
-                                        <button type="button" class="items-center justify-center" onclick="confirmDelete({{ $user->id }})">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </button>
-                                    </form>
                                 @endif
                             </div>
                         </td>
@@ -90,22 +84,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const year_month_Input = document.getElementById('year_month');
-            if (year_month_Input) {
-                year_month_Input.addEventListener('change', function() {
-                    document.getElementById('year_month_select').submit();
-                });
-            }
+            ['year_month', 'month_num'].forEach(function(id) {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('change', function() {
+                        document.getElementById('year_month_select').submit();
+                    });
+                }
+            });
         });
-
-        function confirmDelete(userId) {
-            if (confirm('本当に削除しますか？')) {
-                document.getElementById('delete-form-' + userId).submit();
-            } else {
-                // 今いるページにリダイレクトさせる
-                window.location.href = "{{ url()->current() }}";
-                confirm('削除しませんでした');
-            }
-        }
     </script>
 </x-app-layout>

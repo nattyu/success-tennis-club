@@ -69,7 +69,8 @@ if (!function_exists('convertCourtNumber')) {
 }
 
 if (!function_exists('calculateMonthRange')) {
-    function calculateMonthRange($request) {
+    // $default_month_num: month_numが指定されていない場合に表示する月数
+    function calculateMonthRange($request, $default_month_num = 1) {
         // セレクトボックスで選択した値がnullでないか確認
         if ($request->year_month) {
             $year_month_list = explode('-', $request->year_month);
@@ -88,12 +89,30 @@ if (!function_exists('calculateMonthRange')) {
         if ($select_month < 1 || $select_month > 12) {
             $select_month = date('n'); // 現在の月の数字を取得
         }
-    
-        // 選択された月の始まりと終わりの日付を計算
+
+        // 表示する月数（1〜3ヶ月）
+        $month_num = intval($request->month_num ?? $default_month_num);
+        if (!in_array($month_num, getMonthNumChoices(), true)) {
+            $month_num = $default_month_num;
+        }
+
+        // 選択された月の始まりと、表示月数分進めた月の終わりの日付を計算
         $month_start = sprintf('%04d-%02d-01', $select_year, $select_month);
-        $month_end = date('Y-m-t', strtotime($month_start));
-    
-        return ['select' => (string) $select, 'month_start' => $month_start, 'month_end' => $month_end];
+        $month_end = date('Y-m-t', strtotime($month_start . ' +' . ($month_num - 1) . ' month'));
+
+        return [
+            'select' => (string) $select,
+            'month_start' => $month_start,
+            'month_end' => $month_end,
+            'month_num' => $month_num,
+        ];
+    }
+}
+
+if (!function_exists('getMonthNumChoices')) {
+    // 表示月数として選択できる値
+    function getMonthNumChoices() {
+        return [1, 2, 3];
     }
 }
 
@@ -138,6 +157,47 @@ if (!function_exists('generateYearMonthOptions')) {
             $options .= '<option value="' . $year . '-' . $month . '" ' . $selected . '>' . $year . '年' . $month . '月</option>';
         }
         return $options;
+    }
+}
+
+if (!function_exists('generateMonthNumOptions')) {
+    function generateMonthNumOptions($month_num) {
+        $options = '';
+        foreach (getMonthNumChoices() as $num) {
+            $selected = intval($month_num) === $num ? 'selected' : '';
+            $options .= '<option value="' . $num . '" ' . $selected . '>' . $num . 'ヶ月分</option>';
+        }
+        return $options;
+    }
+}
+
+if (!function_exists('getCourtCacheRanges')) {
+    // 指定日を含む1〜3ヶ月分の表示範囲（キャッシュキーの元になる開始日・終了日）を全て返す
+    function getCourtCacheRanges($date) {
+        $ranges = [];
+        $firstDayOfMonth = getFirstDayOfMonth($date);
+
+        foreach (getMonthNumChoices() as $month_num) {
+            // 表示開始月が指定日の月から遡って何ヶ月目でも、範囲に含まれるものを列挙
+            for ($offset = 0; $offset < $month_num; $offset++) {
+                $start = date('Y-m-01', strtotime($firstDayOfMonth . ' -' . $offset . ' month'));
+                $end = date('Y-m-t', strtotime($start . ' +' . ($month_num - 1) . ' month'));
+                $ranges[$start . '_' . $end] = ['start' => $start, 'end' => $end];
+            }
+        }
+        return array_values($ranges);
+    }
+}
+
+if (!function_exists('clearCourtCaches')) {
+    // 指定日を含む全ての表示範囲のキャッシュをクリア
+    function clearCourtCaches($date) {
+        foreach (getCourtCacheRanges($date) as $range) {
+            $suffix = '_' . $range['start'] . '_' . $range['end'];
+            \Illuminate\Support\Facades\Cache::forget('postCourts' . $suffix);
+            \Illuminate\Support\Facades\Cache::forget('attendances' . $suffix);
+            \Illuminate\Support\Facades\Cache::forget('attendanceMatrix' . $suffix);
+        }
     }
 }
 
