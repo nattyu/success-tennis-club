@@ -53,11 +53,13 @@ class PostCourtController extends Controller
                                 ->get();
         });
 
-        // 集計データの準備
+        // 集計データの準備（コートIDごとに事前グループ化してO(N)で集計）
+        $attendancesByCourt = $attendances->groupBy('elected_court_id');
         $attendanceCounts = [];
         foreach ($postCourts as $p_court) {
-            $attendanceCounts[$p_court->id]['〇'] = $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '〇')->count();
-            $attendanceCounts[$p_court->id]['△'] = $attendances->where('elected_court_id', $p_court->id)->where('attend_flg', '△')->count();
+            $courtAttendances = $attendancesByCourt->get($p_court->id, collect());
+            $attendanceCounts[$p_court->id]['〇'] = $courtAttendances->where('attend_flg', '〇')->count();
+            $attendanceCounts[$p_court->id]['△'] = $courtAttendances->where('attend_flg', '△')->count();
         }
 
         return [
@@ -90,10 +92,13 @@ class PostCourtController extends Controller
         // 出席情報のマトリックスをキャッシュから取得、または構築してキャッシュに保存
         $cacheKeyAttendanceMatrix = 'attendanceMatrix_' . $data['month_start'] . '_' . $data['month_end'];
         $attendanceMatrix = Cache::remember($cacheKeyAttendanceMatrix, 300, function () use ($users, $postCourts, $attendances) {
+            // user_id・elected_court_idごとに事前グループ化してO(N+M)で構築
+            $attendancesByUserAndCourt = $attendances->groupBy(['user_id', 'elected_court_id']);
             $matrix = [];
             foreach ($users as $user) {
+                $userAttendances = $attendancesByUserAndCourt->get($user->id, collect());
                 foreach ($postCourts as $p_court) {
-                    $attend_array = $attendances->where('user_id', $user->id)->where('elected_court_id', $p_court->id)->first();
+                    $attend_array = $userAttendances->get($p_court->id, collect())->first();
                     $matrix[$user->id][$p_court->id] = $attend_array ? $attend_array->attend_flg : 'null';
                 }
             }
